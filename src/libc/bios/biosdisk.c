@@ -16,6 +16,7 @@
 #include <go32.h>
 #include <dpmi.h>
 #include <stdlib.h>
+#include <libc/pc9800.h>
 
 static int dos_segment = 0;
 static int dos_selector = 0;
@@ -44,7 +45,7 @@ alloc_dos_buffer(void)
 }
 
 int
-biosdisk(int cmd, int drive, int head, int track,
+biosdisk_at(int cmd, int drive, int head, int track,
 	 int sector, int nsects, void *buffer)
 {
   int seg=0, ofs=0, before=0;
@@ -121,7 +122,7 @@ biosdisk(int cmd, int drive, int head, int track,
 }
 
 unsigned 
-_bios_disk(unsigned _cmd, struct diskinfo_t *_di)
+_bios_disk_at(unsigned _cmd, struct diskinfo_t *_di)
 {
   int seg=0, ofs=0, before=0;
   size_t xfer=0;
@@ -174,4 +175,38 @@ _bios_disk(unsigned _cmd, struct diskinfo_t *_di)
   if (xfer && !before)
     dosmemget(seg*16+ofs, xfer, _di->buffer);
   return r.x.ax;
+}
+
+int biosdisk_98(int cmd, int drive, int head, int track,
+	 int sector, int nsects, void *buffer)
+{
+  /* NOT to be implemented */
+  return -1;
+}
+
+unsigned _bios_disk_98(unsigned _cmd, struct diskinfo_t *_di)
+{
+  /* NOT to be implemented */
+  return -1;
+}
+
+static int (*_biosdisk_jmp_tbl[])(int, int, int, int, int, int, void *) = {
+  biosdisk_at,
+  biosdisk_98
+};
+
+static unsigned (*__bios_disk_jmp_tbl[])(unsigned, struct diskinfo_t *) = {
+  _bios_disk_at,
+  _bios_disk_98
+};
+
+int biosdisk(int cmd, int drive, int head, int track,
+	 int sector, int nsects, void *buffer)
+{
+  return (*_biosdisk_jmp_tbl[__crt0_mtype >> 4])(cmd, drive, head, track, sector, nsects, buffer);
+}
+
+unsigned _bios_disk(unsigned _cmd, struct diskinfo_t *_di)
+{
+  return (*__bios_disk_jmp_tbl[__crt0_mtype >> 4])(_cmd, _di);
 }

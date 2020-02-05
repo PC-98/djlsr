@@ -1,3 +1,4 @@
+/* Modified by takas 1997-2000 for libc(AT/98) */
 /* Copyright (C) 1994, 1995 Charles Sandmann (sandmann@clio.rice.edu)
    Exception handling and basis for signal support for DJGPP V2.0
    This software may be freely distributed, no warranty. */
@@ -108,7 +109,7 @@ show_call_frame(void)
 
   if (isatty(STDERR_FILENO))
   {
-    max =_farpeekb(_dos_ds, 0x484) + 1;	/* number of screen lines */
+    max = ScreenRows();		/* number of screen lines */
     if (max < 10 || max > 75)	/* sanity check */
       max = 10;			/* 10 worked for v2.0 and v2.01 */
     else
@@ -556,7 +557,7 @@ __djgpp_exception_setup(void)
   }
   kbd_ori.selector = npx_ori.selector = except.selector;
   npx_ori.offset32 = (unsigned) &__djgpp_npx_hdlr;
-  if(ScreenPrimary != 0xa0000)
+  if ( ISPCAT(__crt0_mtype) )
     kbd_ori.offset32 = (unsigned) &__djgpp_kbd_hdlr;
   else
   {
@@ -573,7 +574,8 @@ __djgpp_exception_setup(void)
   __djgpp_exception_toggle();	/* Set new values & save old values */
 
   /* get original video mode and save */
-  old_video_mode = _farpeekb(_dos_ds, 0x449);
+  if( ISPCAT(__crt0_mtype) )
+    old_video_mode = _farpeekb(_dos_ds, 0x449);
 }
 
 int

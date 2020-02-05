@@ -17,6 +17,7 @@
 #include <conio.h>
 #include <libc/bss.h>
 #include <libc/unconst.h>
+#include <libc/pc9800.h>
 
 int _wscroll = 1;
 
@@ -75,7 +76,7 @@ mayrefreshline(int c, int r, int *srow, int *scol, int *ecol)
 }
 
 int
-puttext(int c, int r, int c2, int r2, void *buf)
+puttext_at(int c, int r, int c2, int r2, void *buf)
 {
   short *cbuf = (short *)buf;
   /* we should check for valid parameters, and maybe return 0 */
@@ -133,7 +134,7 @@ wherey(void)
 }
 
 void
-textmode(int mode)
+textmode_at(int mode)
 {
   __dpmi_regs regs;
   int mode_to_set = mode;
@@ -234,7 +235,7 @@ normvideo(void)
 }
 
 void
-_setcursortype(int type)
+_setcursortype_at(int type)
 {
   unsigned cursor_shape;
   switch (type)
@@ -287,7 +288,7 @@ clreol(void)
 }
 
 static void
-fillrow(int row, int left, int right, int fill)
+fillrow_at(int row, int left, int right, int fill)
 {
   int col;
   short filler[right-left+1];
@@ -300,7 +301,7 @@ fillrow(int row, int left, int right, int fill)
 }
 
 void
-clrscr(void)
+clrscr_at(void)
 {
   short filler[txinfo.winright - txinfo.winleft + 1];
   int row, col;
@@ -479,7 +480,7 @@ _scan_ungetch(int c, FILE *fp)
 
 
 void
-insline(void)
+insline_at(void)
 {
   int row, col, left, right, nbytes, bot, fill;
   ScreenGetCursor(&row, &col);
@@ -502,7 +503,7 @@ insline(void)
 
 
 void
-delline(void)
+delline_at(void)
 {
   int row, col, left, right, nbytes, bot, fill;
   ScreenGetCursor(&row, &col);
@@ -540,7 +541,7 @@ window(int left, int top, int right, int bottom)
 
 
 int
-cputs(const char *s)
+cputs_at(const char *s)
 {
   int     row, col,c;
   const unsigned char *ss = (const unsigned char *)s;
@@ -794,7 +795,7 @@ getvideomode(void)
     
 
 static void
-bell(void)
+bell_at(void)
 {
   __dpmi_regs regs;
   regs.h.ah = 0x0e;		/* write */
@@ -803,7 +804,7 @@ bell(void)
 }
 
 static int 
-get_screenattrib(void)
+get_screenattrib_at(void)
 {
   __dpmi_regs regs;
   regs.h.ah = 0x08;		/* read character and attribute */
@@ -970,7 +971,7 @@ set_scan_lines_and_8x10_font(int scan_lines)
 
 /* Switch to screen lines given by NLINES.  */
 void
-_set_screen_lines(int nlines)
+_set_screen_lines_at(int nlines)
 {
   switch (nlines)
     {
@@ -1022,7 +1023,7 @@ _set_screen_lines(int nlines)
 }
 
 void
-blinkvideo(void)
+blinkvideo_at(void)
 {
 
   /* Set intensity/blinking bit to BLINKING.  */
@@ -1034,7 +1035,7 @@ blinkvideo(void)
 }
 
 void
-intensevideo(void)
+intensevideo_at(void)
 {
 
   /* Set intensity/blinking bit to INTENSE (bright background).  */
@@ -1059,27 +1060,39 @@ gppconio_init(void)
       font_seg = -1;
     }
 
-  (void)isEGA();    /* sets the global ADAPTER_TYPE */
+  /* get_screenattrib_98 depends on ScreenAddress */ 
+  if ( ISPC98(__crt0_mtype) ) {
+    ScreenAddress = ScreenPrimary;
+    adapter_type = 2;
+  } else
+    (void)isEGA();    /* sets the global ADAPTER_TYPE */
 
   if (oldattrib == -1)
     oldattrib = get_screenattrib();
   if (last_mode == 0xffff)
     last_mode = getvideomode();
   _gettextinfo(&txinfo);
-  if (txinfo.currmode == 7)	/* MONO */
-    ScreenAddress = 0xb0000UL;
-  else
-    ScreenAddress = 0xb8000UL;
-  intense_bg_mode = (_farpeekb(_dos_ds, 0x465) & 0x20) == 0;
 
-  regs.x.es = regs.x.di = 0;	/* Dummy for checking */
-  regs.h.ah = 0xfe;		/* Get Video Buffer */
-  __dpmi_int(0x10, &regs);
-  ScreenVirtualSegment = regs.x.es;
-  ScreenVirtualOffset = regs.x.di;
-  if (ScreenVirtualSegment != 0)
-    ScreenAddress = (ScreenVirtualSegment << 4UL) + ScreenVirtualOffset;
-  ScreenPrimary = ScreenAddress;
+  intense_bg_mode = 0;
+  if ( ISPC98(__crt0_mtype) ) {	/* PC-98 or PC-98H */
+    ScreenAddress = ScreenPrimary;
+    ScreenVirtualSegment = 0;
+  } else {			/* PC-AT */
+    if (txinfo.currmode == 7)	/* MONO */
+      ScreenAddress = 0xb0000UL;
+    else
+      ScreenAddress = 0xb8000UL;
+    intense_bg_mode = (_farpeekb(_dos_ds, 0x465) & 0x20) == 0;
+
+    regs.x.es = regs.x.di = 0;	/* Dummy for checking */
+    regs.h.ah = 0xfe;		/* Get Video Buffer */
+    __dpmi_int(0x10, &regs);
+    ScreenVirtualSegment = regs.x.es;
+    ScreenVirtualOffset = regs.x.di;
+    if (ScreenVirtualSegment != 0)
+      ScreenAddress = (ScreenVirtualSegment << 4UL) + ScreenVirtualOffset;
+    ScreenPrimary = ScreenAddress;
+  }
 
 #if 0
   /* Why should gppconio_init() restore OLDATTRIB?  I think it
@@ -1091,3 +1104,5 @@ gppconio_init(void)
 }
 
 __asm__(".section .ctor; .long _gppconio_init; .section .text");
+
+#include "conio98.c"

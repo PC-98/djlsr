@@ -40,7 +40,7 @@ static int uclock_bss = -1;
 		  = 1,193,180 utics/sec */
 
 uclock_t
-uclock(void)
+uclock_at(void)
 {
   static uclock_t base = 0;
   static unsigned long last_tics = 0;
@@ -136,4 +136,56 @@ uclock(void)
 
   /* return relative time */
   return rv - base;
+}
+
+uclock_t uclock_98( void )
+{
+/*[エミュレーションに関する問題点]*****************************
+    ・タイムスタンパ高分解能使用	 307200Hz(0x4B000Hz)
+    ・カレンダも使用するので時間がかかる(T_T)
+ **************************************************************/
+  static time_t   base_sec = 0;
+  static unsigned base_tic = 0;
+  time_t   rv_sec;
+  unsigned rv_tic, ticL, ticH, diff_sec;
+  uclock_t diff_tic;
+
+  if (uclock_bss != __bss_count) {
+    uclock_bss = __bss_count;
+    base_sec = 0;
+    base_tic = 0;
+  }
+
+  rv_sec = time(NULL);
+  ticH   = inportw(0x5C);
+  ticL   = inportw(0x5E) & 0xff00;
+  rv_tic = (ticL << 8) + ticH;
+  if (base_sec == 0L) {
+    base_sec = rv_sec;
+    base_tic = rv_tic;
+  }
+
+  diff_sec = rv_sec - base_sec;
+  if ( __crt0_mtype == PC98H || _farpeekb(_dos_ds, 0x45B) & 0x04 ) {
+    ticL = rv_tic - base_tic;
+    if ( rv_tic < base_tic )
+      ticL += 0x1000000;
+    if ( ticL > 0x800000 )
+      diff_sec -= 8;
+    else
+      diff_sec += 8;
+    diff_tic = (uclock_t)(diff_sec * 0x4B / 0x1000) * 0x1000000 + ticL;
+    return (uclock_t)(diff_tic*UCLOCKS_PER_SEC/0x4B000);
+  } else
+    return (uclock_t)(diff_sec*UCLOCKS_PER_SEC);
+}
+
+static uclock_t (*_uclock_jmp_tbl[])(void) = {
+  uclock_at,
+  uclock_98
+};
+
+uclock_t uclock(void)
+{
+  return (*_uclock_jmp_tbl[__crt0_mtype >> 4])();
 }

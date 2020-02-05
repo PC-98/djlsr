@@ -13,25 +13,25 @@
 #include <libc/getdinfo.h>
 #include <dpmi.h>
 #include <go32.h>
+#include <libc/pc9800.h>
+#include <bios.h>
 
 static int
 getkey_nowait (void)
 {
-  __dpmi_regs r;
-
   /* If the head and tail of the keyboard buffer are the same, the
      buffer is empty.  */
-  if (_farpeekw(_dos_ds, 0x41a) == _farpeekw(_dos_ds, 0x41c))
+  if ( ISPCAT(__crt0_mtype)
+       && _farpeekw(_dos_ds, 0x41a) == _farpeekw(_dos_ds, 0x41c) )
+    return 0;
+  if ( ISPC98(__crt0_mtype)
+       && _farpeekw(_dos_ds, 0x524) == _farpeekw(_dos_ds, 0x526) )
     return 0;
 
-  r.h.ah = 0x11;
-  __dpmi_int(0x16, &r);
-  if (r.x.flags & 0x40) /* if Zero flag is set, no key is waiting */
+  if ( !bioskey(_NKEYBRD_READY) )
     return 0;
 
-  r.h.ah = 0x10;
-  __dpmi_int(0x16, &r);
-  return r.x.ax;
+  return bioskey(_NKEYBRD_READ);
 }
 
 int

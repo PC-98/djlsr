@@ -36,6 +36,7 @@
    the value of `__bss_count' if they need to reinitialize
    the static storage.  */
 int __bss_count = 1;
+int __crt0_mtype = PCAT;
 
 extern char **_environ;
 
@@ -87,19 +88,30 @@ setup_core_selector(void)
 static void
 setup_screens(void)
 {
-  if(_farpeekw(_dos_ds, 0xffff3) == 0xfd80)	/* NEC PC98 ? */
-  {
-    ScreenPrimary = ScreenSecondary = 0xa0000;
-  }
-  else if (_farpeekb(_dos_ds, 0x449) == 7)
-  {
-    ScreenPrimary = 0xb0000;
-    ScreenSecondary = 0xb8000;
-  }
-  else
-  {
-    ScreenPrimary = 0xb8000;
-    ScreenSecondary = 0xb0000;
+  __dpmi_regs r;
+  if (_farpeekw(_dos_ds, 0xffff3) == 0xfd80) {	/* NEC PC9800 */
+    if (_farpeekb(_dos_ds, 0x458) & 0x08) {
+      __crt0_mtype = PC98H;
+      ScreenPrimary = ScreenSecondary = 0xe0000;
+    } else {
+      __crt0_mtype = PC98;
+      ScreenPrimary = ScreenSecondary = 0xa0000;
+    }
+  } else {
+    r.x.ax = 0x6300;
+    __dpmi_int(0x21, &r);
+    r.d.ebx = (r.x.ds << 4) + r.x.si;
+    r.x.ax = _farpeekw(_dos_ds, r.d.ebx);
+    r.x.dx = _farpeekw(_dos_ds, r.d.ebx+2);
+    if (r.x.dx == 0xfce0 && r.x.ax == 0x9f81)	/* PC-AT DOS/V(jp) */
+      __crt0_mtype = DOSV;
+    if (_farpeekb(_dos_ds, 0x449) == 7) {
+      ScreenPrimary = 0xb0000;
+      ScreenSecondary = 0xb8000;
+    } else {
+      ScreenPrimary = 0xb8000;
+      ScreenSecondary = 0xb0000;
+    }
   }
 }
 
@@ -131,8 +143,8 @@ setup_environment(void)
   char *dos_environ = alloca(_stubinfo->env_size), *cp;
   short env_selector;
   int env_count=0;
-  movedata(_stubinfo->psp_selector, 0x2c, ds, (int)&env_selector, 2);
-  movedata(env_selector, 0, ds, (int)dos_environ, _stubinfo->env_size);
+  movedata(_stubinfo->psp_selector, 0x2c, __my_ds, (int)&env_selector, 2);
+  movedata(env_selector, 0, __my_ds, (int)dos_environ, _stubinfo->env_size);
   cp = dos_environ;
   do {
     env_count++;
