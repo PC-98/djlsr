@@ -1,0 +1,140 @@
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file include/libc/pc9800.h
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/b_time.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/bioscom.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/biosdisk.c
+Hunk #1 FAILED at 1.
+Hunk #2 succeeded at 16 (offset 2 lines).
+Hunk #3 succeeded at 45 with fuzz 1 (offset 2 lines).
+Hunk #4 succeeded at 122 with fuzz 2 (offset 3 lines).
+Hunk #5 succeeded at 176 (offset 4 lines).
+1 out of 5 hunks FAILED -- saving rejects to file src/libc/bios/biosdisk.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/biosequi.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/bioskey.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/biosmem.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/biosprin.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/bios/biostime.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/compat/time/rawclock.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/crt0/crt1.c
+Hunk #1 FAILED at 1.
+Hunk #2 FAILED at 18.
+Hunk #3 succeeded at 36 with fuzz 2 (offset 6 lines).
+Hunk #4 succeeded at 88 (offset 30 lines).
+Hunk #5 succeeded at 143 (offset 30 lines).
+2 out of 5 hunks FAILED -- saving rejects to file src/libc/crt0/crt1.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/dos/dos/delay.c
+Hunk #1 FAILED at 1.
+Hunk #2 succeeded at 62 with fuzz 1 (offset 43 lines).
+1 out of 2 hunks FAILED -- saving rejects to file src/libc/dos/dos/delay.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/dos/io/flushdc.c
+Hunk #1 FAILED at 1.
+Hunk #2 FAILED at 23.
+Hunk #3 FAILED at 34.
+3 out of 3 hunks FAILED -- saving rejects to file src/libc/dos/io/flushdc.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/go32/dpmiexcp.c
+Hunk #2 FAILED at 22.
+Hunk #3 succeeded at 109 (offset 3 lines).
+Hunk #4 FAILED at 193.
+Hunk #5 FAILED at 518.
+Hunk #6 succeeded at 557 (offset 5 lines).
+Hunk #7 succeeded at 574 (offset 5 lines).
+3 out of 7 hunks FAILED -- saving rejects to file src/libc/go32/dpmiexcp.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/conio.c
+Hunk #1 FAILED at 1.
+Hunk #2 succeeded at 17 (offset 1 line).
+Hunk #3 succeeded at 76 (offset 1 line).
+Hunk #4 FAILED at 91.
+Hunk #5 succeeded at 134 (offset 1 line).
+Hunk #6 succeeded at 235 (offset 1 line).
+Hunk #7 succeeded at 288 (offset 1 line).
+Hunk #8 succeeded at 301 (offset 1 line).
+Hunk #9 succeeded at 480 (offset 1 line).
+Hunk #10 succeeded at 503 (offset 1 line).
+Hunk #11 succeeded at 541 (offset 1 line).
+Hunk #12 succeeded at 795 (offset 7 lines).
+Hunk #13 succeeded at 804 (offset 7 lines).
+Hunk #14 succeeded at 971 (offset 7 lines).
+Hunk #15 succeeded at 1023 (offset 7 lines).
+Hunk #16 succeeded at 1035 (offset 7 lines).
+Hunk #17 succeeded at 1060 (offset 7 lines).
+Hunk #18 succeeded at 1104 (offset 7 lines).
+2 out of 18 hunks FAILED -- saving rejects to file src/libc/pc_hw/co80/conio.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/conio98.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scattrib.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scclear.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/sccols.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scgetc.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scgetch.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scmode.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scputc.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scputs.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scretr.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scrows.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scsetc.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scupdate.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scupdl.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/co80/scvbell.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/kb/getkey.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/kb/getxkey.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/kb/kbhit.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/mono/mono.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/sound/sound.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/timer/clock.c
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/pc_hw/timer/uclock.c
+Hunk #1 FAILED at 1.
+Hunk #2 FAILED at 8.
+Hunk #3 succeeded at 40 (offset 21 lines).
+Hunk #4 succeeded at 137 (offset 54 lines).
+2 out of 4 hunks FAILED -- saving rejects to file src/libc/pc_hw/timer/uclock.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/posix/termios/tcflush.c
+Hunk #1 FAILED at 1.
+Hunk #2 succeeded at 13 with fuzz 2 (offset 5 lines).
+Hunk #3 succeeded at 19 (offset -3 lines).
+1 out of 3 hunks FAILED -- saving rejects to file src/libc/posix/termios/tcflush.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/posix/termios/tminit.c
+Hunk #1 FAILED at 1.
+Hunk #2 FAILED at 23.
+Hunk #3 FAILED at 111.
+Hunk #4 FAILED at 144.
+Hunk #5 FAILED at 528.
+5 out of 5 hunks FAILED -- saving rejects to file src/libc/posix/termios/tminit.c.rej
+(Stripping trailing CRs from patch; use --binary to disable.)
+patching file src/libc/posix/unistd/getpid.c

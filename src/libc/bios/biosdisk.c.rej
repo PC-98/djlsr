@@ -1,0 +1,7 @@
+--- src.org/libc/bios/biosdisk.c	Mon Oct  9 02:00:00 1995
++++ src/libc/bios/biosdisk.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ /*
+  * BIOSDISK.C.

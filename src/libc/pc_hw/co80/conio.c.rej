@@ -1,0 +1,16 @@
+--- src.org/libc/pc_hw/co80/conio.c	Thu Jun  3 13:27:36 1999
++++ src/libc/pc_hw/co80/conio.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1998 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1997 DJ Delorie, see COPYING.DJ for details */
+@@ -91,7 +93,7 @@
+ }
+ 
+ int
+-gettext(int c, int r, int c2, int r2, void *buf)
++gettext_at(int c, int r, int c2, int r2, void *buf)
+ {
+   short *cbuf = (short *)buf;
+   /* we should check for valid parameters, and maybe return 0 */

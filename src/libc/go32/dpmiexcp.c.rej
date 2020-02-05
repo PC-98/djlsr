@@ -1,0 +1,28 @@
+--- src.org/libc/go32/dpmiexcp.c	Thu Sep  2 04:30:38 1999
++++ src/libc/go32/dpmiexcp.c	Sun Nov 12 00:00:00 2000
+@@ -22,6 +23,7 @@
+ #include <sys/exceptn.h>
+ #include <sys/nearptr.h>		/* For DS base/limit info */
+ #include <libc/internal.h>
++#include <libc/pc9800.h>
+ 
+ #define err(x) _write(STDERR_FILENO, x, sizeof(x)-1)
+ 
+@@ -193,7 +195,7 @@
+   const char *prog_name;
+   
+   /* check video mode for original here and reset (not if PC98) */
+-  if(ScreenPrimary != 0xa0000 && _farpeekb(_dos_ds, 0x449) != old_video_mode) {
++  if( ISPCAT(__crt0_mtype) && _farpeekb(_dos_ds, 0x449) != old_video_mode ) {
+     asm("pusha;movzbl _old_video_mode,%eax; int $0x10;popa;nop");
+   }
+   en = (signum >= EXCEPTION_COUNT) ? 0 : 
+@@ -518,7 +520,7 @@
+   __dpmi_meminfo lockmem;
+   int i;
+ 
+-  if (ScreenPrimary != 0xa0000)
++  if ( ISPCAT(__crt0_mtype) )
+     {
+       __djgpp_set_sigint_key(DEFAULT_SIGINT);
+       __djgpp_set_sigquit_key(DEFAULT_SIGQUIT);

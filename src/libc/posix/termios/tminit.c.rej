@@ -1,0 +1,77 @@
+--- src.org/libc/posix/termios/tminit.c	Thu Jun  3 13:27:40 1999
++++ src/libc/posix/termios/tminit.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /*
+@@ -23,6 +24,8 @@
+ #include <libc/dosio.h>
+ #include <libc/ttyprvt.h>
+ #include <libc/farptrgs.h>
++#include <libc/pc9800.h>
++#include <bios.h>
+ 
+ #define _DEV_STDIN  0x0001
+ #define _DEV_STDOUT 0x0002
+@@ -111,25 +114,13 @@
+ static inline int
+ __direct_keysense (void)
+ {
+-  __dpmi_regs r;
+-
+-  r.h.ah = 0x01;
+-  __dpmi_int (0x16, &r);
+-  if (r.x.flags & _REG_STATUS_ZF)
+-    return 0;
+-
+-  return 1;
++  return bioskey(_KEYBRD_READY);
+ }
+ 
+ static inline unsigned char
+ __direct_keyinput (void)
+ {
+-  __dpmi_regs r;
+-
+-  r.h.ah = 0x00;
+-  __dpmi_int (0x16, &r);
+-
+-  return r.h.al;
++  return bioskey(_KEYBRD_READ) & 0x00ff;
+ }
+ 
+ #define _KEY_INS  0x80
+@@ -144,14 +135,7 @@
+ static inline int
+ __direct_ctrlsense (void)
+ {
+-  __dpmi_regs r;
+-
+-  r.h.ah = 0x02;
+-  __dpmi_int (0x16, &r);
+-  if (r.h.al & _KEY_CTRL)
+-    return 1;
+-
+-  return 0;
++  return bioskey(_KEYBRD_SHIFTSTATUS) & _KEY_CTRL;
+ }
+ 
+ static inline void
+@@ -528,13 +512,12 @@
+ 	  /* produce spaces until the next TAB stop */
+ 	  else if (ch == '\t')
+ 	    {
+-	      int col, max_col;
++	      int row, col, max_col;
+ 
+-	      _farsetsel (_dos_ds);
+ 	      /* current column (cursor position) on the active page */
+-	      col = _farnspeekw (0x450 + _farnspeekb (0x462)) & 0xff;
++	      ScreenGetCursor(&row, &col);
+ 	      /* the number of displayed character columns */
+-	      max_col = _farnspeekw (0x44a);
++	      max_col = ScreenCols();
+ 
+ 	      for (__direct_output (' '), col += 1; col % 8; col++)
+ 		{

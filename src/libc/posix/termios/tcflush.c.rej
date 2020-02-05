@@ -1,0 +1,7 @@
+--- src.org/libc/posix/termios/tcflush.c	Thu Jun  3 13:27:40 1999
++++ src/libc/posix/termios/tcflush.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ #include <errno.h>

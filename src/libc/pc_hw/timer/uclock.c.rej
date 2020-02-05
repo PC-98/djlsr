@@ -1,0 +1,15 @@
+--- src.org/libc/pc_hw/timer/uclock.c	Thu Jun  3 13:27:38 1999
++++ src/libc/pc_hw/timer/uclock.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+@@ -8,6 +9,7 @@
+ #include <go32.h>
+ #include <dpmi.h>
+ #include <libc/bss.h>
++#include <libc/pc9800.h>
+ 
+ static int uclock_bss = -1;
+ 

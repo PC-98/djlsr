@@ -1,0 +1,16 @@
+--- src.org/libc/dos/dos/delay.c	Tue Mar 21 02:35:38 1995
++++ src/libc/dos/dos/delay.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <dos.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
++#include <go32.h>
++#include <libc/farptrgs.h>
+ 
+-void delay(unsigned msec)
++void delay_at(unsigned msec)
+ {
+   __dpmi_regs r;
+   while (msec)
