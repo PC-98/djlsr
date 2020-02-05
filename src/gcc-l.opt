@@ -1,0 +1,7 @@
+-MD
+-O2
+-mtune=i586
+-march=i386
+-Wall
+-nostdinc
+-iquote .

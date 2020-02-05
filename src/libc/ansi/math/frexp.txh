@@ -1,0 +1,29 @@
+@c ----------------------------------------------------------------------
+@node frexp, math
+@findex frexp
+@subheading Syntax
+
+@example
+#include <math.h>
+
+double frexp(double x, int *pexp);
+@end example
+
+@subheading Description
+
+This function separates the given value @var{x} into a mantissa m in the
+range @code{[0.5,1)} and an exponent e, such that @math{m*2^e = @var{x}}.
+It returns the value of the mantissa and stores the integer exponent in
+@var{*pexp}.
+
+@subheading Return Value
+
+The mantissa.  If the value of @var{x} is @code{NaN} or @code{Inf}, the
+return value is @code{NaN}, zero is stored in @code{*pexp}, and
+@code{errno} is set to @code{EDOM}.  If @var{x} is zero, @var{*pexp} and
+the return value are also both zero.
+
+@subheading Portability
+
+@portability ansi, posix
+

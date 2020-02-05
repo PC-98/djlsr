@@ -1,0 +1,19 @@
+-MD
+-O2
+-mtune=i586
+-march=i386
+-Wall
+-Wbad-function-cast
+-Wcast-qual
+-Werror
+-Wmissing-declarations
+-Wmissing-prototypes
+-Wpointer-arith
+-Wshadow
+-Wstrict-prototypes
+-Wwrite-strings
+-Wundef
+-Wcast-align
+-Wsign-compare
+-nostdinc
+-iquote .

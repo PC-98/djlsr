@@ -1,0 +1,19 @@
+-MD
+-O2
+-mtune=i586
+-march=i386
+-Wall
+
+-Wcast-qual
+-Werror
+
+
+-Wpointer-arith
+-Wshadow
+
+-Wwrite-strings
+-Wundef
+-Wcast-align
+-Wsign-compare
+-nostdinc
+-iquote .
