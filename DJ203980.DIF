@@ -1,0 +1,3313 @@
+diff -urN include.org/libc/pc9800.h include/libc/pc9800.h
+--- include.org/libc/pc9800.h	Thu Jan  1 09:00:00 1970
++++ include/libc/pc9800.h	Sun Nov 12 00:00:00 2000
+@@ -0,0 +1,186 @@
++/*
++ *  PC9800.H : djgpp v2.03 libc for PC-AT/PC-9800 PATCH Rel.0
++ *
++ *  Copyright (C) 1997-2000 takas / tantan / Wataru Kaneko / Naoki Takano
++ */
++#ifndef __PC9800_H_
++#define __PC9800_H_
++#include <bios.h>
++#include <time.h>
++
++#define PCAT	0x00	/* IBM PC-AT and Compatible */
++#define DOSV	0x01	/* IBM PC-AT and Compatible with DOS/V */
++#define PC98	0x10	/* NEC PC-9800 Series */
++#define PC98H	0x11	/* NEC PC-H98 Series - No Support */
++
++#define ISPCAT(mtype)	((mtype & 0xf0) == PCAT)
++#define ISPC98(mtype)	((mtype & 0xf0) == PC98)
++
++#define PC98_KEYS	0x6C
++
++#define TXA_98AT(txa)	conv_98at_txatbl[(unsigned char)(txa)] /* at to 98 */
++#define TXA_AT98(txa)	conv_at98_txatbl[(unsigned char)(txa)] /* 98 to at */
++
++/* src/libc/bios/b_time.c */
++unsigned _bios_timeofday_at(unsigned _cmd, unsigned long *_timeval);
++unsigned _bios_timeofday_98(unsigned _cmd, unsigned long *_timeval);
++
++/* src/libc/bios/bioscom.c */
++int bioscom_at(int cmd, char data, int port);
++int bioscom_98(int cmd, char data, int port);
++unsigned char conv_98at_com_mode(int data);
++int conv_at98_com_status(int cx);
++
++/* src/libc/bios/biosdisk.c */
++int biosdisk_at(int _cmd, int _drive, int _head, int _track, int _sector,
++		int _nsects, void *_buffer);
++int biosdisk_98(int _cmd, int _drive, int _head, int _track, int _sector,
++		int _nsects, void *_buffer);
++unsigned _bios_disk_at(unsigned _cmd, struct _diskinfo_t *_di);
++unsigned _bios_disk_98(unsigned _cmd, struct _diskinfo_t *_di);
++
++/* src/libc/bios/biosequi.c */
++int biosequip_at(void);
++int biosequip_98(void);
++
++/* src/libc/bios/bioskey.c */
++int bioskey_at(int cmd);
++int bioskey_98(int cmd);
++int conv_at98_bioskey(unsigned char ah);
++
++/* src/libc/bios/biosmem.c */
++int biosmemory_at(void);
++int biosmemory_98(void);
++
++/* src/libc/bios/biosprin.c */
++int biosprint_at(int _cmd, int _byte, int _port);
++int biosprint_98(int _cmd, int _byte, int _port);
++
++/* src/libc/bios/biostime.c */
++long biostime_at(int _cmd, long _newtime);
++long biostime_98(int _cmd, long _newtime);
++
++/* src/libc/crt0/crt1.c */
++extern int __crt0_mtype;
++
++/* src/libc/dos/delay.c */
++void delay_at(unsigned msec);
++void delay_98(unsigned msec);
++
++/* src/libc/pc_hw/co80/conio.c */
++int puttext_at(int c, int r, int c2, int r2, void *buf);
++int puttext_98(int c, int r, int c2, int r2, void *buf);
++int gettext_at(int c, int r, int c2, int r2, void *buf);
++int gettext_98(int c, int r, int c2, int r2, void *buf);
++void textmode_at(int mode);
++void textmode_98(int mode);
++void _setcursortype_at(int type);
++void _setcursortype_98(int type);
++void fillrow(int row, int left, int right, int fill);
++void clrscr_at(void);
++void clrscr_98(void);
++void insline_at(void);
++void insline_98(void);
++void insline_dv(void);
++void delline_at(void);
++void delline_98(void);
++void delline_dv(void);
++int cputs_at(const char *s);
++int cputs_98(const char *s);
++int cputs_dv(const char *s);
++void _set_screen_lines_at(int nlines);
++void _set_screen_lines_98(int nlines);
++void blinkvideo_at(void);
++void blinkvideo_98(void);
++void intensevideo_at(void);
++void intensevideo_98(void);
++void UpdateDOSV(int row, int col, int chars);
++
++/* src/libc/pc_hw/co80/scattrib.c */
++extern unsigned char conv_98at_txatbl[]; /* at to 98 */
++extern unsigned char conv_at98_txatbl[]; /* 98 to at */
++
++/* src/libc/pc_hw/co80/scclear.c */
++void ScreenClear_at(void);
++void ScreenClear_98(void);
++
++/* src/libc/pc_hw/co80/sccols.c */
++int ScreenCols_at(void);
++int ScreenCols_98(void);
++
++/* src/libc/pc_hw/co80/scgetc.c */
++void ScreenGetCursor_at(int *_row, int *_col);
++void ScreenGetCursor_98(int *_row, int *_col);
++
++/* src/libc/pc_hw/co80/scgetch.c */
++void ScreenGetChar_at(int *_ch, int *_attr, int _x, int _y);
++void ScreenGetChar_98(int *_ch, int *_attr, int _x, int _y);
++
++/* src/libc/pc_hw/co80/scmode.c */
++int ScreenMode_at(void);
++int ScreenMode_98(void);
++
++/* src/libc/pc_hw/co80/scputc.c */
++void ScreenPutChar_at(int _ch, int _attr, int _x, int _y);
++void ScreenPutChar_98(int _ch, int _attr, int _x, int _y);
++
++/* src/libc/pc_hw/co80/scputs.c */
++void ScreenPutString_at(const char *_ch, int _attr, int _x, int _y);
++void ScreenPutString_98(const char *_ch, int _attr, int _x, int _y);
++
++/* src/libc/pc_hw/co80/scretr.c */
++void ScreenRetrieve_at(void *_virtual_screen);
++void ScreenRetrieve_98(void *_virtual_screen);
++
++/* src/libc/pc_hw/co80/scrows.c */
++int ScreenRows_at(void);
++int ScreenRows_98(void);
++
++/* src/libc/pc_hw/co80/scsetc.c */
++void ScreenSetCursor_at(int _row, int _col);
++void ScreenSetCursor_98(int _row, int _col);
++
++/* src/libc/pc_hw/co80/scupdate.c */
++void ScreenUpdate_at(const void *_virtual_screen);
++void ScreenUpdate_98(const void *_virtual_screen);
++
++/* src/libc/pc_hw/co80/scupdl.c */
++void ScreenUpdateLine_at(const void *_virtual_screen_line, int _row);
++void ScreenUpdateLine_98(const void *_virtual_screen_line, int _row);
++
++/* src/libc/pc_hw/co80/scvbell.c */
++void ScreenVisualBell_at(void);
++void ScreenVisualBell_98(void);
++
++/* src/libc/pc_hw/kb/getkey.c */
++int getkey_at(void);
++int getkey_98(void);
++int conv_at98_pchwkey(unsigned char ah, unsigned char xflag);
++
++/* src/libc/pc_hw/kb/getxkey.c */
++int getxkey_at(void);
++int getxkey_98(void);
++
++/* src/libc/pc_hw/kb/kbhit.c */
++int kbhit_at(void);
++int kbhit_98(void);
++
++/* src/libc/pc_hw/mono/mono.c */
++void _mono_clear_at(void);
++void _mono_clear_98(void);
++void _mono_putc_at(int ch);
++void _mono_putc_98(int ch);
++
++/* src/libc/pc_hw/sound/sound.c */
++void sound_at(int freq);
++void sound_98(int freq);
++
++/* src/libc/pc_hw/clock/clock.c */
++clock_t clock_at(void);
++clock_t clock_98(void);
++
++/* src/libc/pc_hw/clock/uclock.c */
++uclock_t uclock_at(void);
++uclock_t uclock_98(void);
++
++#endif
+diff -urN src.org/libc/bios/b_time.c src/libc/bios/b_time.c
+--- src.org/libc/bios/b_time.c	Sun Oct 29 00:03:00 1995
++++ src/libc/bios/b_time.c	Sun Nov 12 00:00:00 2000
+@@ -1,10 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ 
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
+ 
+ unsigned
+-_bios_timeofday(unsigned _cmd, unsigned long *_timeval)
++_bios_timeofday_at(unsigned _cmd, unsigned long *_timeval)
+ {
+   __dpmi_regs r;
+ 
+@@ -19,3 +21,40 @@
+     *_timeval = (r.x.cx << 16) | r.x.dx;
+   return r.h.al;
+ }
++
++unsigned _bios_timeofday_98(unsigned _cmd, unsigned long *_timeval)
++{
++  static unsigned long base_tics = 0;
++  static unsigned int  base_time = 0, last_time = 0;
++  unsigned int this_time = 0, midnight = 0;
++  __dpmi_regs r;
++
++  r.h.ah = 0x2C;
++  __dpmi_int(0x21, &r);
++  this_time = ((r.h.ch*60+r.h.cl)*60+r.h.dh)*100+r.h.dl;
++
++  if ( this_time < last_time ) { /* midnight passed */
++    base_tics = 0;
++    base_time = 0;
++    midnight  = 1;
++  }
++  last_time = this_time;
++
++  if ( _cmd == _TIME_SETCLOCK ) { /* SET */
++    base_tics = *_timeval;
++    base_time = this_time;
++  } else                          /* GET */
++    *_timeval = (this_time-base_time)*91/500 + base_tics;
++
++  return midnight;
++}
++
++static unsigned (*__bios_timeofday_jmp_tbl[])(unsigned, unsigned long *) = {
++  _bios_timeofday_at,
++  _bios_timeofday_98
++};
++
++unsigned _bios_timeofday(unsigned _cmd, unsigned long *_timeval)
++{
++  return (*__bios_timeofday_jmp_tbl[__crt0_mtype >> 4])(_cmd, _timeval);
++}
+diff -urN src.org/libc/bios/bioscom.c src/libc/bios/bioscom.c
+--- src.org/libc/bios/bioscom.c	Sun Feb 26 19:43:18 1995
++++ src/libc/bios/bioscom.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,11 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
++#include <stdlib.h>
+ 
+-int bioscom(int cmd, char data, int port)
++int bioscom_at(int cmd, char data, int port)
+ {
+   __dpmi_regs r;
+   r.h.ah = cmd;
+@@ -11,3 +14,124 @@
+   __dpmi_int(0x14, &r);
+   return r.x.ax;
+ }
++
++static int com_segment = 0;
++static int com_selector = 0;
++static void free_com_buffer(void);
++static void alloc_com_buffer(void);
++
++int bioscom_98(int cmd, char data, int port)
++{
++/*[エミュレーションに関する問題点]*****************************
++    ・(cmd=0,3) 時のステータス(bit0...16)は完全互換ではない
++    ・(cmd=1,2) 時のステータス(bit8...16)は PC9800 BIOS の AH
++    ・2ndCCU には対応していない
++ **************************************************************/
++  static int init = 0;
++  __dpmi_regs r;
++
++  if ( port )
++    return 0;
++
++  if ( !init ) {
++    init = 1;
++    alloc_com_buffer();
++    if ( cmd != 0x00 )
++      bioscom_98(0x00, 0xe3, 0x00);
++  }
++
++  switch(cmd){
++  case 0x00:	/* initialize */
++    r.h.ah = 0x00;
++    r.h.al = (data & 0xe0) >> 5; /* 0x000 は 110 ではなく 75 となる */
++    r.x.bx = 0x0000;
++    r.h.ch = conv_98at_com_mode(data);
++    r.h.cl = 0x27;
++    r.x.dx = 250;
++    r.x.di = 0x0000;
++    r.x.es = com_segment;
++    __dpmi_int(0x19, &r);
++  case 0x03:	/* get status */
++    r.h.ah = 0x06;
++    __dpmi_int(0x19, &r);
++    return conv_at98_com_status(r.x.cx);
++  case 0x01:	/* write */
++    r.h.ah = 0x03;
++    r.h.al = data;
++    r.h.cl = 0x40;
++    __dpmi_int(0x19, &r);
++    return (r.h.ah << 8) | data;
++  case 0x02:	/* read */
++    r.h.ah = 0x04;
++    __dpmi_int(0x19, &r);
++    return (r.h.ah << 8) | r.h.ch;
++  }
++  return 0;
++}
++
++static void free_com_buffer(void)
++{
++  __dpmi_free_dos_memory(com_selector);
++  com_segment = com_selector = 0;
++}
++
++static void alloc_com_buffer(void)
++{
++  if (com_segment)
++    return;
++  com_segment = __dpmi_allocate_dos_memory((504+15)/16, &com_selector);
++  if (com_segment == -1) {
++    com_segment = 0;
++    return;
++  }
++  atexit(free_com_buffer);
++}
++
++unsigned char conv_98at_com_mode(int data)
++{
++  unsigned char mode = 0x02;
++
++  mode |= (data & 0x03) << 2;		/* bits/character */
++  mode |= (data & 0x18) << 1;		/* parity */
++  mode |= (data & 0x40) ? 0xC0 : 0x40;	/* stop bit(s)*/
++
++  return mode;
++}
++
++int conv_at98_com_status(int cx)
++{
++  int status = 0;
++
++  if ( !(cx & 0x0040) )	/* CS */
++    status |= 0x0010;
++  if ( cx & 0x8000 )	/* DSR */
++    status |= 0x0020;
++  if ( !(cx & 0x0020) )	/* CD */
++    status |= 0x0080;
++  if ( cx & 0x0200 )	/* RRDY */
++    status |= 0x0100;
++  if ( cx & 0x1000 )	/* OE */
++    status |= 0x0200;
++  if ( cx & 0x0800 )	/* PE */
++    status |= 0x0400;
++  if ( cx & 0x2000 )	/* FE */
++    status |= 0x0800;
++  if ( cx & 0x4000 )	/* BD */
++    status |= 0x1000;
++  if ( cx & 0x0400 )	/* TE */
++    status |= 0x2000;
++  if ( cx & 0x0100 )	/* TRDY */
++    status |= 0x4000;
++
++  return status;
++}
++
++static int (*_bioscom_jmp_tbl[])(int,char,int) = {
++  bioscom_at,
++  bioscom_98
++};
++
++int bioscom(int cmd,char data,int port)
++{
++  return (*_bioscom_jmp_tbl[__crt0_mtype >> 4])(cmd, data, port);
++}
+diff -urN src.org/libc/bios/biosdisk.c src/libc/bios/biosdisk.c
+--- src.org/libc/bios/biosdisk.c	Mon Oct  9 02:00:00 1995
++++ src/libc/bios/biosdisk.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ /*
+  * BIOSDISK.C.
+@@ -14,6 +15,7 @@
+ #include <go32.h>
+ #include <dpmi.h>
+ #include <stdlib.h>
++#include <libc/pc9800.h>
+ 
+ static int dos_segment = 0;
+ static int dos_selector = 0;
+@@ -42,7 +44,7 @@
+ }
+ 
+ int
+-biosdisk(int cmd, int drive, int head, int track,
++biosdisk_at(int cmd, int drive, int head, int track,
+ 	 int sector, int nsects, void *buffer)
+ {
+   int seg=0, ofs=0, xfer=0, before=0;
+@@ -118,7 +120,7 @@
+ }
+ 
+ unsigned 
+-_bios_disk(unsigned _cmd, struct diskinfo_t *_di)
++_bios_disk_at(unsigned _cmd, struct diskinfo_t *_di)
+ {
+   int seg=0, ofs=0, xfer=0, before=0;
+   __dpmi_regs r;
+@@ -171,3 +173,37 @@
+     dosmemget(seg*16+ofs, xfer, _di->buffer);
+   return r.x.ax;
+ }
++
++int biosdisk_98(int cmd, int drive, int head, int track,
++	 int sector, int nsects, void *buffer)
++{
++  /* NOT to be implemented */
++  return -1;
++}
++
++unsigned _bios_disk_98(unsigned _cmd, struct diskinfo_t *_di)
++{
++  /* NOT to be implemented */
++  return -1;
++}
++
++static int (*_biosdisk_jmp_tbl[])(int, int, int, int, int, int, void *) = {
++  biosdisk_at,
++  biosdisk_98
++};
++
++static unsigned (*__bios_disk_jmp_tbl[])(unsigned, struct diskinfo_t *) = {
++  _bios_disk_at,
++  _bios_disk_98
++};
++
++int biosdisk(int cmd, int drive, int head, int track,
++	 int sector, int nsects, void *buffer)
++{
++  return (*_biosdisk_jmp_tbl[__crt0_mtype >> 4])(cmd, drive, head, track, sector, nsects, buffer);
++}
++
++unsigned _bios_disk(unsigned _cmd, struct diskinfo_t *_di)
++{
++  return (*__bios_disk_jmp_tbl[__crt0_mtype >> 4])(_cmd, _di);
++}
+diff -urN src.org/libc/bios/biosequi.c src/libc/bios/biosequi.c
+--- src.org/libc/bios/biosequi.c	Sun Feb 26 19:43:18 1995
++++ src/libc/bios/biosequi.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,44 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
++#include <go32.h>
++#include <pc.h>
++#include <libc/farptrgs.h>
+ 
+ int
+-biosequip(void)
++biosequip_at(void)
+ {
+   __dpmi_regs r;
+   __dpmi_int(0x11, &r);
+   return r.x.ax;
+ }
++
++int biosequip_98(void)
++{
++  int flag = 0x4025;
++
++  /* 2nd CCU */
++  outportb(0x23f, 0);
++  if ( inportb(0x23f) == 0x00 )
++    flag |= 0x0400;
++  else
++    flag |= 0x0200;
++
++  /* FPU */
++  if ( _farpeekb(_dos_ds, (__crt0_mtype == PC98H) ? 0xE3FEA : 0xA3FEA) & 0x18 )
++    flag |= 0x0002;
++
++  return flag;
++}
++
++static int (*_biosequip_jmp_tbl[])(void) = {
++  biosequip_at,
++  biosequip_98
++};
++
++int biosequip(void)
++{
++  return (*_biosequip_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/bios/bioskey.c src/libc/bios/bioskey.c
+--- src.org/libc/bios/bioskey.c	Mon Oct  9 02:00:00 1995
++++ src/libc/bios/bioskey.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ /*
+  * BIOSKEY.C.
+@@ -11,9 +12,10 @@
+ 
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
+ 
+ int
+-bioskey(int cmd)
++bioskey_at(int cmd)
+ {
+   __dpmi_regs r;
+   r.h.ah = cmd;
+@@ -37,3 +39,219 @@
+   }
+   return 0;
+ }
++
++int bioskey_98(int cmd)
++{
++  int shift = 0;
++  __dpmi_regs r;
++
++  r.h.ah = cmd & 0x0f;
++  __dpmi_int(0x18, &r);
++  switch ( cmd ) {
++  case 0x00:
++  case 0x10:
++    return conv_at98_bioskey(r.h.ah);
++  case 0x01:
++  case 0x11:
++    if ( !r.h.bh )
++      return 0;
++    else
++      r.x.ax = conv_at98_bioskey(r.h.ah);
++    return (!r.x.ax) ? -1 : r.x.ax;
++  case 0x12:
++    if ( r.h.al & 0x10 )
++      shift |= 0x0500;
++    if ( r.h.al & 0x08 )
++      shift |= 0x0A00;
++    if ( r.h.al & 0x04 )
++      shift |= 0x1000;
++    if ( r.h.al & 0x02 )
++      shift |= 0x4000;
++  case 0x02:
++    if ( r.h.al & 0x01 )
++      shift |= 0x03;
++    if ( r.h.al & 0x10 )
++      shift |= 0x04;
++    if ( r.h.al & 0x08 )
++      shift |= 0x08;
++    if ( r.h.al & 0x04 )
++      shift |= 0x10;
++    if ( r.h.al & 0x02 )
++      shift |= 0x40;
++    return shift;
++  }
++  return 0;
++}
++
++static short conv_at98_bioskeytbl[PC98_KEYS][4] = {
++/* 0x00 */
++  { 0x011B, 0x011B, 0x011B, 0x0100 },	/* ESC	: ESC	ESC		*/
++  { 0x0231, 0x0221, 0x0231, 0x7800 },	/* 1	: 1	!		*/
++  { 0x0332, 0x2822, 0x0300, 0x7900 },	/* 2	: 2	"		*/
++  { 0x0433, 0x0423, 0x0433, 0x7B00 },	/* 3	: 3	#		*/
++  { 0x0534, 0x0524, 0x0534, 0x7B00 },	/* 4	: 4	$		*/
++  { 0x0635, 0x0625, 0x0635, 0x7C00 },	/* 5	: 5	%		*/
++  { 0x0736, 0x0826, 0x071E, 0x7D00 },	/* 6	: 6	&		*/
++  { 0x0837, 0x2827, 0x0837, 0x7e00 },	/* 7	: 7	'		*/
++  { 0x0938, 0x0A28, 0x0938, 0x7f00 },	/* 8	: 8	(		*/
++  { 0x0A39, 0x0B29, 0x0A39, 0x8000 },	/* 9	: 9	)		*/
++  { 0x0B30, 0x0B00, 0x0B30, 0x8100 },	/* 0	: 0			*/
++  { 0x0C2D, 0x0D3D, 0x0C1F, 0x8200 },	/* -	: -	=		*/
++  { 0x075E, 0x2960, 0x075E, 0x8300 },	/* ^	: ^	`		*/
++  { 0x7D5C, 0x7D7C, 0x7D1C, 0x2B00 },	/* \	: \	|		*/
++  { 0x0E08, 0x0E08, 0x0E7F, 0x0E00 },	/* BS	: BS			*/
++  { 0x0F09, 0x0F00, 0x9400, 0xA500 },	/* TAB	: TAB			*/
++/* 0x10 */
++  { 0x1071, 0x1051, 0x1011, 0x1000 },	/* Q	: q	Q		*/
++  { 0x1177, 0x1157, 0x1117, 0x1100 },	/* W	: w	W		*/
++  { 0x1265, 0x1245, 0x1205, 0x1200 },	/* E	: e	E		*/
++  { 0x1372, 0x1352, 0x1312, 0x1300 },	/* R	: r	R		*/
++  { 0x1474, 0x1454, 0x1414, 0x1400 },	/* T	: t	T		*/
++  { 0x1579, 0x1559, 0x1519, 0x1500 },	/* Y	: y	Y		*/
++  { 0x1675, 0x1655, 0x1615, 0x1600 },	/* U	: u	U		*/
++  { 0x1769, 0x1749, 0x1709, 0x1700 },	/* I	: i	I		*/
++  { 0x186F, 0x184F, 0x180F, 0x1800 },	/* O	: o	O		*/
++  { 0x1970, 0x1950, 0x1910, 0x1900 },	/* P	: p	P		*/
++  { 0x0340, 0x297E, 0x0340, 0x0300 },	/* @	: @	~		*/
++  { 0x1A5B, 0x1A7B, 0x1A1B, 0x1A00 },	/* [	: [	{		*/
++  { 0x1C0D, 0x1C0D, 0x1C0A, 0x1C00 },	/* CR	: CR			*/
++  { 0x1E61, 0x1E41, 0x1E01, 0x1E00 },	/* A	: a	A		*/
++  { 0x1F73, 0x1F53, 0x1F13, 0x1F00 },	/* S	: s	S		*/
++  { 0x2064, 0x2044, 0x2004, 0x2000 },	/* D	: d	D		*/
++/* 0x20 */
++  { 0x2166, 0x2146, 0x2106, 0x2100 },	/* F	: f	F		*/
++  { 0x2267, 0x2247, 0x2207, 0x2200 },	/* G	: g	G		*/
++  { 0x2368, 0x2348, 0x2308, 0x2300 },	/* H	: h	H		*/
++  { 0x246A, 0x244A, 0x240A, 0x2400 },	/* J	: j	J		*/
++  { 0x256B, 0x254B, 0x250B, 0x2500 },	/* K	: k	K		*/
++  { 0x266C, 0x264C, 0x260C, 0x2600 },	/* L	: l	L		*/
++  { 0x273B, 0x0D2B, 0x273B, 0x2700 },	/* ;	: ;	+		*/
++  { 0x273A, 0x092A, 0x273A, 0x2700 },	/* :	: :	*		*/
++  { 0x1B5D, 0x1B7D, 0x1B1D, 0x1B00 },	/* ]	: ]	}		*/
++  { 0x2C7A, 0x2C5A, 0x2C1A, 0x2C00 },	/* Z	: z	Z		*/
++  { 0x2D78, 0x2D58, 0x2D18, 0x2D00 },	/* X	: x	X		*/
++  { 0x2E63, 0x2E43, 0x2E03, 0x2E00 },	/* C	: c	C		*/
++  { 0x2F76, 0x2F56, 0x2F16, 0x2F00 },	/* V	: v	V		*/
++  { 0x3262, 0x3242, 0x3002, 0x3000 },	/* B	: b	B		*/
++  { 0x316E, 0x314E, 0x310E, 0x3100 },	/* N	: n	N		*/
++  { 0x326D, 0x324D, 0x320D, 0x3200 },	/* M	: m	M		*/
++/* 0x30 */
++  { 0x332C, 0x333C, 0x332C, 0x3300 },	/* ,	: ,	<	,	*/
++  { 0x342E, 0x343E, 0x342E, 0x3400 },	/* .	: .	>	.	*/
++  { 0x352F, 0x353F, 0x352F, 0x3500 },	/* /	: /	?	/	*/
++  { 0x0C5F, 0x0C5F, 0x0C5F, 0x0C00 },	/* _	: _	_	_	*/
++  { 0x3920, 0x3920, 0x3920, 0x3920 },	/* SPC	: SPC	SPC	SPC	*/
++  { 0x3A00, 0x3A00, 0x3A00, 0x3A00 },	/* XFER	: 漢字			*/
++  { 0x51E0, 0x51E0, 0x76E0, 0xA100 },	/* RUP	: PDN			*/
++  { 0x49E0, 0x49E0, 0x84E0, 0x9900 },	/* RDN	: PUP			*/
++  { 0x52E0, 0x52E0, 0x92E0, 0xA200 },	/* INS	: INS			*/
++  { 0x53E0, 0x53E0, 0x93E0, 0xA300 },	/* DEL	: DEL			*/
++  { 0x48E0, 0x48E0, 0x8DE0, 0x9800 },	/* 上	: 上			*/
++  { 0x4BE0, 0x4BE0, 0x73E0, 0x9B00 },	/* 左	: 左			*/
++  { 0x4DE0, 0x4DE0, 0x74E0, 0x9D00 },	/* 右	: 右			*/
++  { 0x50E0, 0x50E0, 0x91E0, 0xA000 },	/* 下	: 下			*/
++  { 0x47E0, 0x47E0, 0x77E0, 0x9700 },	/* HOME	: HOME			*/
++  { 0x4FE0, 0x4FE0, 0x75E0, 0x9F00 },	/* HELP	: END			*/
++/* 0x40 */
++  { 0x4A2D, 0x4A2D, 0x8E00, 0x4A00 },	/* -	: -			*/
++  { 0xE02F, 0xE02F, 0x9500, 0xA400 },	/* /	: /			*/
++  { 0x4737, 0x4737, 0x7700, 0x4737 },	/* 7	: 7			*/
++  { 0x4838, 0x4838, 0x8D00, 0x4838 },	/* 8	: 8			*/
++  { 0x4939, 0x4939, 0x8400, 0x4939 },	/* 9	: 9			*/
++  { 0x372A, 0x372A, 0x9600, 0x3700 },	/* *	: *			*/
++  { 0x4B34, 0x4B34, 0x7300, 0x4B34 },	/* 4	: 4			*/
++  { 0x4C35, 0x4C35, 0x8F00, 0x4C35 },	/* 5	: 5			*/
++  { 0x4D36, 0x4D36, 0x7400, 0x4D36 },	/* 6	: 6			*/
++  { 0x4E2B, 0x4E2B, 0x9000, 0x4E00 },	/* +	: +			*/
++  { 0x4F31, 0x4F31, 0x7500, 0x4F31 },	/* 1	: 1			*/
++  { 0x5032, 0x5032, 0x9100, 0x5032 },	/* 2	: 2			*/
++  { 0x5133, 0x5133, 0x7600, 0x5133 },	/* 3	: 3			*/
++  { 0x0D3D, 0x0D3D, 0x0D3D, 0x0D3D },	/* =	: =			*/
++  { 0x5230, 0x5230, 0x9200, 0x5230 },	/* 0	: 0			*/
++  { 0x332C, 0x332C, 0x332C, 0x332C },	/* ,	: ,			*/
++/* 0x50 */
++  { 0x532E, 0x532E, 0x9300, 0x532E },	/* .	: .			*/
++  { 0xA700, 0xA800, 0xA900, 0xAA00 },	/* NFER	: 変換			*/
++  { 0x8500, 0x8700, 0x8900, 0x8B00 },	/* vf1	: f11			*/
++  { 0x8600, 0x8800, 0x8A00, 0x8C00 },	/* vf2	: f12			*/
++  { 0xAB00, 0xAC00, 0xAD00, 0xAE00 },	/* vf3	: 無変換		*/
++  { 0xA700, 0xA800, 0xA900, 0xAA00 },	/* vf4	: 変換			*/
++  { 0xB600, 0xB700, 0xB800, 0xB900 },	/* vf5	: かな			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/*	:			*/
++/* 0x60 */
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/* STOP	:			*/
++  { 0x0000, 0x0000, 0x0000, 0x0000 },	/* COPY	:			*/
++  { 0x3B00, 0x5400, 0x5E00, 0x6800 },	/* f01	: f01			*/
++  { 0x3C00, 0x5500, 0x5F00, 0x6900 },	/* f02	: f02			*/
++  { 0x3D00, 0x5600, 0x6000, 0x6A00 },	/* f03	: f03			*/
++  { 0x3E00, 0x5700, 0x6100, 0x6B00 },	/* f04	: f04			*/
++  { 0x3F00, 0x5800, 0x6200, 0x6C00 },	/* f05	: f05			*/
++  { 0x4000, 0x5900, 0x6300, 0x6D00 },	/* f06	: f06			*/
++  { 0x4100, 0x5A00, 0x6400, 0x6E00 },	/* f07	: f07			*/
++  { 0x4200, 0x5B00, 0x6500, 0x6F00 },	/* f08	: f08			*/
++  { 0x4300, 0x5C00, 0x6600, 0x7000 },	/* f09	: f09			*/
++  { 0x4400, 0x5D00, 0x6700, 0x7100 }	/* f10	: f10			*/
++};
++
++int conv_at98_bioskey(unsigned char ah)
++{
++  int shift = 0, keycode;
++  __dpmi_regs r;
++
++  if ( ah >= 0x80 ) {
++    if ( ah == 0xA1 || ah == 0xB1 ) {		/* NFER  : 0xA1 0xB1 */
++      ah = 0x51;
++    } else if ( ah == 0xA5 || ah == 0xB5 ) {	/* XFER  : 0xA5 0xB5 */
++      ah = 0x35;
++    } else if ( ah == 0xAE ) {			/* HOME  : 0xAE */
++      ah = 0x3E;
++    } else if ( ah >= 0xC0 ) {			/* VF1-5 : 0xC2-C6 */
++      ah &= 0x0f;
++      ah |= 0x50;
++    } else {					/* F1-10 : 0x82-8B 0x92-9B */
++      ah &= 0x0f;
++      ah |= 0x60;
++    }
++  }
++
++  if ( ah >= PC98_KEYS )
++    return 0;
++
++  r.h.ah = 2;
++  __dpmi_int(0x18, &r);
++  if ( r.h.al & 0x08 )		/* GRPH */
++    shift = 0x03;
++  else if ( r.h.al & 0x10 )	/* CTRL */
++    shift = 0x02;
++  else if ( r.h.al & 0x01 )	/* SHIFT */
++    shift = 0x01;
++
++  keycode = conv_at98_bioskeytbl[ah][shift];
++
++  if ( r.h.al & 0x02 ) {	/* CAPS */
++    if ( 'a' <= (keycode & 0xff) && (keycode & 0xff) <= 'z' )
++      keycode &= 0xffdf;
++    else if ( 'A' <= (keycode & 0xff) && (keycode & 0xff) <= 'Z' )
++      keycode |= 0x0020;
++  }
++
++  return keycode;
++}
++
++static int (*_bioskey_jmp_tbl[])(int) = {
++  bioskey_at,
++  bioskey_98
++};
++
++int bioskey(int cmd)
++{
++  return (*_bioskey_jmp_tbl[__crt0_mtype >> 4])(cmd);
++}
+diff -urN src.org/libc/bios/biosmem.c src/libc/bios/biosmem.c
+--- src.org/libc/bios/biosmem.c	Sun Feb 26 19:43:20 1995
++++ src/libc/bios/biosmem.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,32 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
+ 
+ int
+-biosmemory(void)
++biosmemory_at(void)
+ {
+   __dpmi_regs r;
+   __dpmi_int(0x12, &r);
+   return r.x.ax;
+ }
++
++int biosmemory_98(void)
++{
++  __dpmi_regs r;
++  r.h.cl = 0x81;
++  r.x.ax = 0x0000;
++  __dpmi_int(0xdc, &r);
++  return r.h.al * 128;
++}
++
++static int (*_biosmemory_jmp_tbl[])(void) = {
++  biosmemory_at,
++  biosmemory_98
++};
++
++int biosmemory(void)
++{
++  return (*_biosmemory_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/bios/biosprin.c src/libc/bios/biosprin.c
+--- src.org/libc/bios/biosprin.c	Sun Feb 26 19:43:20 1995
++++ src/libc/bios/biosprin.c	Sun Nov 12 00:00:00 2000
+@@ -1,9 +1,11 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
+ 
+ int
+-biosprint(int cmd, int byte, int port)
++biosprint_at(int cmd, int byte, int port)
+ {
+   __dpmi_regs r;
+   r.h.ah = cmd;
+@@ -12,3 +14,43 @@
+   __dpmi_int(0x17, &r);
+   return r.h.ah;
+ }
++
++int biosprint_98(int cmd, int byte, int port)
++{
++  __dpmi_regs r;
++
++  if ( port )
++    return 0;
++
++  switch ( cmd ) {
++  case 0: /* send data */
++    r.h.ah = 0x11;
++    r.h.al = byte;
++    __dpmi_int(0x1A, &r);
++    break;
++  case 1: /* initialize */
++    r.h.ah = 0x10;
++    __dpmi_int(0x1A, &r);
++    break;
++  default: /* get status */
++    r.h.ah = 0x12;
++    __dpmi_int(0x1A, &r);
++  }
++
++  if( r.h.al == 0x02 )  /* TIME OUT */
++    return 0x11;
++  if ( r.h.al == 0x00 ) /* BUSY */
++    return 0x10;
++
++  return 0x90;
++}
++
++static int (*_biosprint_jmp_tbl[])(int cmd, int byte, int port) = {
++  biosprint_at,
++  biosprint_98
++};
++
++int biosprint(int cmd, int byte, int port)
++{
++  return (*_biosprint_jmp_tbl[__crt0_mtype >> 4])(cmd, byte, port);
++}
+diff -urN src.org/libc/bios/biostime.c src/libc/bios/biostime.c
+--- src.org/libc/bios/biostime.c	Sun Oct 29 00:03:00 1995
++++ src/libc/bios/biostime.c	Sun Nov 12 00:00:00 2000
+@@ -1,9 +1,11 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <bios.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
+ 
+ long
+-biostime(int cmd, long newtime)
++biostime_at(int cmd, long newtime)
+ {
+   __dpmi_regs r;
+   r.h.ah = cmd;
+@@ -12,3 +14,19 @@
+   __dpmi_int(0x1a, &r);
+   return (r.x.cx << 16) | r.x.dx;
+ }
++
++long biostime_98(int cmd, long newtime)
++{
++  _bios_timeofday(cmd, &newtime);
++  return newtime;
++}
++
++static long (*_biostime_jmp_tbl[])(int, long) = {
++  biostime_at,
++  biostime_98
++};
++
++long biostime(int cmd, long newtime)
++{
++  return (*_biostime_jmp_tbl[__crt0_mtype >> 4])(cmd, newtime);
++}
+diff -urN src.org/libc/compat/time/rawclock.c src/libc/compat/time/rawclock.c
+--- src.org/libc/compat/time/rawclock.c	Sat Aug 30 20:52:48 1997
++++ src/libc/compat/time/rawclock.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,19 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1997 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <time.h>
+ #include <go32.h>
+ #include <libc/farptrgs.h>
++#include <libc/pc9800.h>
++#include <bios.h>
+ 
+ unsigned long
+ rawclock(void)
+ {
++  if ( ISPC98(__crt0_mtype) ) {
++    unsigned long tics;
++    _bios_timeofday_98(_TIME_GETCLOCK, &tics);
++    return tics;
++  }
+   return _farpeekl(_dos_ds, 0x46c);
+ }
+diff -urN src.org/libc/crt0/crt1.c src/libc/crt0/crt1.c
+--- src.org/libc/crt0/crt1.c	Thu Jun  3 13:27:36 1999
++++ src/libc/crt0/crt1.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1998 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1997 DJ Delorie, see COPYING.DJ for details */
+@@ -18,10 +19,11 @@
+ #include <fcntl.h>
+ #include <libc/environ.h>
+ #include <dos.h> /* for _osmajor/_osminor */
++#include <libc/pc9800.h>
+ 
+ /* Global variables */
+ 
+-#define ds _my_ds()
++#define __my_ds _my_ds()
+ 
+ /* This gets incremented each time the program is started.
+    Programs (such as Emacs) which dump their code to create
+@@ -30,6 +32,7 @@
+    the value of `__bss_count' if they need to reinitialize
+    the static storage.  */
+ int __bss_count = 1;
++int __crt0_mtype = PCAT;
+ 
+ char **environ;
+ int _crt0_startup_flags;	/* default to zero unless app overrides them */
+@@ -57,19 +60,30 @@
+ static void
+ setup_screens(void)
+ {
+-  if(_farpeekw(_dos_ds, 0xffff3) == 0xfd80)	/* NEC PC98 ? */
+-  {
+-    ScreenPrimary = ScreenSecondary = 0xa0000;
+-  }
+-  else if (_farpeekb(_dos_ds, 0x449) == 7)
+-  {
+-    ScreenPrimary = 0xb0000;
+-    ScreenSecondary = 0xb8000;
+-  }
+-  else
+-  {
+-    ScreenPrimary = 0xb8000;
+-    ScreenSecondary = 0xb0000;
++  __dpmi_regs r;
++  if (_farpeekw(_dos_ds, 0xffff3) == 0xfd80) {	/* NEC PC9800 */
++    if (_farpeekb(_dos_ds, 0x458) & 0x08) {
++      __crt0_mtype = PC98H;
++      ScreenPrimary = ScreenSecondary = 0xe0000;
++    } else {
++      __crt0_mtype = PC98;
++      ScreenPrimary = ScreenSecondary = 0xa0000;
++    }
++  } else {
++    r.x.ax = 0x6300;
++    __dpmi_int(0x21, &r);
++    r.d.ebx = (r.x.ds << 4) + r.x.si;
++    r.x.ax = _farpeekw(_dos_ds, r.d.ebx);
++    r.x.dx = _farpeekw(_dos_ds, r.d.ebx+2);
++    if (r.x.dx == 0xfce0 && r.x.ax == 0x9f81)	/* PC-AT DOS/V(jp) */
++      __crt0_mtype = DOSV;
++    if (_farpeekb(_dos_ds, 0x449) == 7) {
++      ScreenPrimary = 0xb0000;
++      ScreenSecondary = 0xb8000;
++    } else {
++      ScreenPrimary = 0xb8000;
++      ScreenSecondary = 0xb0000;
++    }
+   }
+ }
+ 
+@@ -101,8 +115,8 @@
+   char *dos_environ = alloca(_stubinfo->env_size), *cp;
+   short env_selector;
+   int env_count=0;
+-  movedata(_stubinfo->psp_selector, 0x2c, ds, (int)&env_selector, 2);
+-  movedata(env_selector, 0, ds, (int)dos_environ, _stubinfo->env_size);
++  movedata(_stubinfo->psp_selector, 0x2c, __my_ds, (int)&env_selector, 2);
++  movedata(env_selector, 0, __my_ds, (int)dos_environ, _stubinfo->env_size);
+   cp = dos_environ;
+   do {
+     env_count++;
+diff -urN src.org/libc/dos/dos/delay.c src/libc/dos/dos/delay.c
+--- src.org/libc/dos/dos/delay.c	Tue Mar 21 02:35:38 1995
++++ src/libc/dos/dos/delay.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <dos.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
++#include <go32.h>
++#include <libc/farptrgs.h>
+ 
+-void delay(unsigned msec)
++void delay_at(unsigned msec)
+ {
+   __dpmi_regs r;
+   while (msec)
+@@ -19,3 +23,53 @@
+     msec -= msec_this;
+   }
+ }
++
++void delay_98(unsigned msec)
++{
++  int tmstmp = (__crt0_mtype == PC98H || _farpeekb(_dos_ds, 0x45B) & 0x04);
++  unsigned hscan = 0, msec_this, i;
++
++  if ( !tmstmp ) {
++    if ( _farpeekb(_dos_ds, 0x501) & 0x08 ) {
++      hscan = 3284; /* 32.86kHz interlace */
++      if ( _farpeekb(_dos_ds, 0x54C) & 0x20 )
++	if ( _farpeekb(_dos_ds, 0x459) & 0x08 )
++	  hscan = 5000; /* 50.02kHz non-interlace */
++    } else {
++      if ( _farpeekb(_dos_ds, 0x54C) & 0x20 ) {
++	hscan = 3145;   /* 31.47kHz */
++      } else {
++	if ( _farpeekb(_dos_ds, 0x53C) & 0x80 )
++	  hscan = 2481; /* 24.83kHz PC-9800 CRT */
++	else
++	  hscan = 1596; /* 15.98kHz PC-8800 CRT */
++      }
++    }
++  }
++
++  while ( msec ) {
++    msec_this = (msec > 8000) ? 8000 : msec;
++    if ( tmstmp ) {
++      i = msec_this * 6 / 5;
++      hscan = inportw(0x5e);
++      while ( (inportw(0x5e) - hscan) < i );
++    } else {
++      i = hscan * msec_this / 100;
++      while (i--) {
++	while ( !(inportb(0x60) & 0x40) );
++	while ( inportb(0x60) & 0x40 );
++      }
++    }
++    msec -= msec_this;
++  }
++}
++
++static void (*_delay_jmp_tbl[])(unsigned) = {
++  delay_at,
++  delay_98
++};
++
++void delay(unsigned msec)
++{
++  (*_delay_jmp_tbl[__crt0_mtype >> 4])(msec);
++}
+diff -urN src.org/libc/dos/io/flushdc.c src/libc/dos/io/flushdc.c
+--- src.org/libc/dos/io/flushdc.c	Thu Sep 19 19:38:56 1996
++++ src/libc/dos/io/flushdc.c	Sun Nov 12 00:00:00 2000
+@@ -1,9 +1,10 @@
+-/* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ #include <libc/stubs.h>
+ #include <fcntl.h>	/* for _USE_LFN */
+ #include <io.h>		/* for the prototype of `_flush_disk_cache' */
+ #include <dir.h>	/* for `getdisk' */
+ #include <dpmi.h>	/* for `__dpmi_int' and friends */
++#include <libc/pc9800.h>
+ 
+ /* Try to cause the disk cache to write the cached data to disk(s).  */
+ void
+@@ -23,7 +24,7 @@
+       /* According to docs (Interrupt list), this doesn't return
+ 	 any error codes (??).  */
+     }
+-  else
++  else if ( ISPCAT(__crt0_mtype) )
+     {
+       /* The BIOS Disk Reset function causes most DOS caches to flush.  */
+       r.x.ax = 0;
+@@ -34,4 +35,8 @@
+       r.x.dx = drv > 2 ? ((drv - 2) | 0x80) : drv;
+       __dpmi_int (0x13, &r);
+     }
++  else {
++    r.h.ah = 0x0d;
++    __dpmi_int(0x21, &r);
++  }
+ }
+diff -urN src.org/libc/go32/dpmiexcp.c src/libc/go32/dpmiexcp.c
+--- src.org/libc/go32/dpmiexcp.c	Thu Sep  2 04:30:38 1999
++++ src/libc/go32/dpmiexcp.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1994, 1995 Charles Sandmann (sandmann@clio.rice.edu)
+    Exception handling and basis for signal support for DJGPP V2.0
+    This software may be freely distributed, no warranty. */
+@@ -21,6 +22,7 @@
+ #include <sys/exceptn.h>
+ #include <sys/nearptr.h>		/* For DS base/limit info */
+ #include <libc/internal.h>
++#include <libc/pc9800.h>
+ 
+ #define err(x) _write(STDERR_FILENO, x, sizeof(x)-1)
+ 
+@@ -105,7 +107,7 @@
+ 
+   if (isatty(STDERR_FILENO))
+   {
+-    max =_farpeekb(_dos_ds, 0x484) + 1;	/* number of screen lines */
++    max = ScreenRows();		/* number of screen lines */
+     if (max < 10 || max > 75)	/* sanity check */
+       max = 10;			/* 10 worked for v2.0 and v2.01 */
+     else
+@@ -192,7 +194,7 @@
+   const char *prog_name;
+   
+   /* check video mode for original here and reset (not if PC98) */
+-  if(ScreenPrimary != 0xa0000 && _farpeekb(_dos_ds, 0x449) != old_video_mode) {
++  if( ISPCAT(__crt0_mtype) && _farpeekb(_dos_ds, 0x449) != old_video_mode ) {
+     asm("pusha;movzbl _old_video_mode,%eax; int $0x10;popa;nop");
+   }
+   en = (signum >= EXCEPTION_COUNT) ? 0 : 
+@@ -517,7 +519,7 @@
+   __dpmi_meminfo lockmem;
+   int i;
+ 
+-  if (ScreenPrimary != 0xa0000)
++  if ( ISPCAT(__crt0_mtype) )
+     {
+       __djgpp_set_sigint_key(DEFAULT_SIGINT);
+       __djgpp_set_sigquit_key(DEFAULT_SIGQUIT);
+@@ -551,7 +553,7 @@
+   }
+   kbd_ori.selector = npx_ori.selector = except.selector;
+   npx_ori.offset32 = (unsigned) &__djgpp_npx_hdlr;
+-  if(ScreenPrimary != 0xa0000)
++  if ( ISPCAT(__crt0_mtype) )
+     kbd_ori.offset32 = (unsigned) &__djgpp_kbd_hdlr;
+   else
+   {
+@@ -568,7 +570,8 @@
+   __djgpp_exception_toggle();	/* Set new values & save old values */
+ 
+   /* get original video mode and save */
+-  old_video_mode = _farpeekb(_dos_ds, 0x449);
++  if( ISPCAT(__crt0_mtype) )
++    old_video_mode = _farpeekb(_dos_ds, 0x449);
+ }
+ 
+ int
+diff -urN src.org/libc/pc_hw/co80/conio.c src/libc/pc_hw/co80/conio.c
+--- src.org/libc/pc_hw/co80/conio.c	Thu Jun  3 13:27:36 1999
++++ src/libc/pc_hw/co80/conio.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1998 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1997 DJ Delorie, see COPYING.DJ for details */
+@@ -16,6 +17,7 @@
+ #include <conio.h>
+ #include <libc/bss.h>
+ #include <libc/unconst.h>
++#include <libc/pc9800.h>
+ 
+ int _wscroll = 1;
+ 
+@@ -74,7 +76,7 @@
+ }
+ 
+ int
+-puttext(int c, int r, int c2, int r2, void *buf)
++puttext_at(int c, int r, int c2, int r2, void *buf)
+ {
+   short *cbuf = (short *)buf;
+   /* we should check for valid parameters, and maybe return 0 */
+@@ -90,7 +92,7 @@
+ }
+ 
+ int
+-gettext(int c, int r, int c2, int r2, void *buf)
++gettext_at(int c, int r, int c2, int r2, void *buf)
+ {
+   short *cbuf = (short *)buf;
+   /* we should check for valid parameters, and maybe return 0 */
+@@ -132,7 +134,7 @@
+ }
+ 
+ void
+-textmode(int mode)
++textmode_at(int mode)
+ {
+   __dpmi_regs regs;
+   int mode_to_set = mode;
+@@ -233,7 +235,7 @@
+ }
+ 
+ void
+-_setcursortype(int type)
++_setcursortype_at(int type)
+ {
+   unsigned cursor_shape;
+   switch (type)
+@@ -286,7 +288,7 @@
+ }
+ 
+ static void
+-fillrow(int row, int left, int right, int fill)
++fillrow_at(int row, int left, int right, int fill)
+ {
+   int col;
+   short filler[right-left+1];
+@@ -299,7 +301,7 @@
+ }
+ 
+ void
+-clrscr(void)
++clrscr_at(void)
+ {
+   short filler[txinfo.winright - txinfo.winleft + 1];
+   int row, col;
+@@ -478,7 +480,7 @@
+ 
+ 
+ void
+-insline(void)
++insline_at(void)
+ {
+   int row, col, left, right, nbytes, bot, fill;
+   ScreenGetCursor(&row, &col);
+@@ -501,7 +503,7 @@
+ 
+ 
+ void
+-delline(void)
++delline_at(void)
+ {
+   int row, col, left, right, nbytes, bot, fill;
+   ScreenGetCursor(&row, &col);
+@@ -539,7 +541,7 @@
+ 
+ 
+ int
+-cputs(const char *s)
++cputs_at(const char *s)
+ {
+   int     row, col,c;
+   const unsigned char *ss = (const unsigned char *)s;
+@@ -787,7 +789,7 @@
+     
+ 
+ static void
+-bell(void)
++bell_at(void)
+ {
+   __dpmi_regs regs;
+   regs.h.ah = 0x0e;		/* write */
+@@ -796,7 +798,7 @@
+ }
+ 
+ static int 
+-get_screenattrib(void)
++get_screenattrib_at(void)
+ {
+   __dpmi_regs regs;
+   regs.h.ah = 0x08;		/* read character and attribute */
+@@ -963,7 +965,7 @@
+ 
+ /* Switch to screen lines given by NLINES.  */
+ void
+-_set_screen_lines(int nlines)
++_set_screen_lines_at(int nlines)
+ {
+   switch (nlines)
+     {
+@@ -1015,7 +1017,7 @@
+ }
+ 
+ void
+-blinkvideo(void)
++blinkvideo_at(void)
+ {
+ 
+   /* Set intensity/blinking bit to BLINKING.  */
+@@ -1027,7 +1029,7 @@
+ }
+ 
+ void
+-intensevideo(void)
++intensevideo_at(void)
+ {
+ 
+   /* Set intensity/blinking bit to INTENSE (bright background).  */
+@@ -1052,27 +1054,39 @@
+       font_seg = -1;
+     }
+ 
+-  (void)isEGA();    /* sets the global ADAPTER_TYPE */
++  /* get_screenattrib_98 depends on ScreenAddress */ 
++  if ( ISPC98(__crt0_mtype) ) {
++    ScreenAddress = ScreenPrimary;
++    adapter_type = 2;
++  } else
++    (void)isEGA();    /* sets the global ADAPTER_TYPE */
+ 
+   if (oldattrib == -1)
+     oldattrib = get_screenattrib();
+   if (last_mode == 0xffff)
+     last_mode = getvideomode();
+   _gettextinfo(&txinfo);
+-  if (txinfo.currmode == 7)	/* MONO */
+-    ScreenAddress = 0xb0000UL;
+-  else
+-    ScreenAddress = 0xb8000UL;
+-  intense_bg_mode = (_farpeekb(_dos_ds, 0x465) & 0x20) == 0;
+ 
+-  regs.x.es = regs.x.di = 0;	/* Dummy for checking */
+-  regs.h.ah = 0xfe;		/* Get Video Buffer */
+-  __dpmi_int(0x10, &regs);
+-  ScreenVirtualSegment = regs.x.es;
+-  ScreenVirtualOffset = regs.x.di;
+-  if (ScreenVirtualSegment != 0)
+-    ScreenAddress = (ScreenVirtualSegment << 4UL) + ScreenVirtualOffset;
+-  ScreenPrimary = ScreenAddress;
++  intense_bg_mode = 0;
++  if ( ISPC98(__crt0_mtype) ) {	/* PC-98 or PC-98H */
++    ScreenAddress = ScreenPrimary;
++    ScreenVirtualSegment = 0;
++  } else {			/* PC-AT */
++    if (txinfo.currmode == 7)	/* MONO */
++      ScreenAddress = 0xb0000UL;
++    else
++      ScreenAddress = 0xb8000UL;
++    intense_bg_mode = (_farpeekb(_dos_ds, 0x465) & 0x20) == 0;
++
++    regs.x.es = regs.x.di = 0;	/* Dummy for checking */
++    regs.h.ah = 0xfe;		/* Get Video Buffer */
++    __dpmi_int(0x10, &regs);
++    ScreenVirtualSegment = regs.x.es;
++    ScreenVirtualOffset = regs.x.di;
++    if (ScreenVirtualSegment != 0)
++      ScreenAddress = (ScreenVirtualSegment << 4UL) + ScreenVirtualOffset;
++    ScreenPrimary = ScreenAddress;
++  }
+ 
+ #if 0
+   /* Why should gppconio_init() restore OLDATTRIB?  I think it
+@@ -1084,3 +1098,5 @@
+ }
+ 
+ __asm__(".section .ctor; .long _gppconio_init; .section .text");
++
++#include "conio98.c"
+diff -urN src.org/libc/pc_hw/co80/conio98.c src/libc/pc_hw/co80/conio98.c
+--- src.org/libc/pc_hw/co80/conio98.c	Thu Jan  1 09:00:00 1970
++++ src/libc/pc_hw/co80/conio98.c	Sun Nov 12 00:00:00 2000
+@@ -0,0 +1,559 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
++
++/***
++ * PC-AT with DOS/V
++ **/
++
++void insline_dv(void)
++{
++  int row, col;
++  __dpmi_regs r;
++
++  ScreenGetCursor(&row, &col);
++  if ( txinfo.wintop-1 <= row && row < txinfo.winbottom-1 ) {
++    r.x.ax = 0x0701;
++    r.h.ch = row;
++    r.h.cl = txinfo.winleft - 1;
++    r.h.dh = txinfo.winbottom - 1;
++    r.h.dl = txinfo.winright - 1;
++    r.h.bh = ScreenAttrib;
++    __dpmi_int(0x10, &r);
++  } else if ( row == txinfo.winbottom-1 )
++    fillrow(row, txinfo.winleft-1, txinfo.winright-1, ' '+(ScreenAttrib<<8));
++}
++
++void delline_dv(void)
++{
++  int row, col;
++  __dpmi_regs r;
++
++  ScreenGetCursor(&row, &col);
++  if ( txinfo.wintop-1 <= row && row < txinfo.winbottom-1 ) {
++    r.x.ax = 0x0601;
++    r.h.ch = row;
++    r.h.cl = txinfo.winleft - 1;
++    r.h.dh = txinfo.winbottom - 1;
++    r.h.dl = txinfo.winright - 1;
++    r.h.bh = ScreenAttrib;
++    __dpmi_int(0x10, &r);
++  } else if ( row == txinfo.winbottom-1 )
++    fillrow(row, txinfo.winleft-1, txinfo.winright-1, ' '+(ScreenAttrib<<8));
++}
++
++int cputs_dv(const char *s)
++{
++  int row, col, c, left = txinfo.winleft-1, vr, vc, changed = 0;
++  const unsigned char *ss = (const unsigned char *)s;
++  short sa = ScreenAttrib << 8, q, *viaddr;
++  ScreenGetCursor(&row, &col); vr = row; vc = col;
++  viaddr = (short *)VIDADDR(row,col);
++
++  while ((c = *ss++)) {
++    switch ( c ) {
++    case '\n':
++      row++;
++      viaddr += txinfo.screenwidth;
++      if ( changed ) {
++	UpdateDOSV(vr, vc, changed);
++	vr = row; vc = col; changed = 0;
++      }
++      break;
++    case '\r':
++      col = left;
++      viaddr = (short *)VIDADDR(row,col);
++      if ( changed ) {
++	UpdateDOSV(vr, vc, changed);
++	vr = row; vc = col; changed = 0;
++      }
++      break;
++    case '\b':
++      if (col > left) {
++	col--;
++	viaddr--;
++      } else if (row > txinfo.wintop-1) {
++	row--;
++	col = txinfo.winright-1;
++	viaddr = (short *)VIDADDR(row,col);
++      }
++      if ( changed ) {
++	UpdateDOSV(vr, vc, changed);
++	vr = row; vc = col; changed = 0;
++      }
++      break;
++    case 0x07:
++      bell();
++      break;
++    default:
++      q = c | sa;
++      dosmemput(&q, 2, (int)viaddr);
++      viaddr++;
++      col++;
++      changed++;
++      break;
++    }
++
++    if (col >= txinfo.winright) {
++      col = left;
++      row++;
++      viaddr = (short *)VIDADDR(row, col);
++    }
++    if (row >= txinfo.winbottom) {
++      if ( changed )
++	UpdateDOSV(vr, vc, changed);
++      if (_wscroll) {
++	ScreenSetCursor(txinfo.wintop-1, left);
++	delline();
++      }
++      row--;
++      viaddr -= txinfo.screenwidth;
++      vr = row; vc = col; changed = 0;
++    }
++  }
++
++  if ( changed )
++    UpdateDOSV(vr, vc, changed);
++  ScreenSetCursor(row, col);
++  txinfo.cury = row - txinfo.wintop + 2;
++  txinfo.curx = col - txinfo.winleft + 2;
++  return(*(--ss));
++}
++
++void UpdateDOSV(int row, int col, int chars)
++{
++  __dpmi_regs r;
++
++  r.h.ah = 0xff;
++  r.x.es = ScreenVirtualSegment;
++  r.x.di = ScreenVirtualOffset;
++  if ( chars > 0 ) {
++    r.x.cx  = chars;
++    r.x.di += (row*txinfo.screenwidth+col)*2;
++  } else
++    r.x.cx  = txinfo.screenwidth * txinfo.screenheight;
++  __dpmi_int(0x10, &r);
++}
++
++/***
++ * PC-9800 & PC-H98
++ **/
++
++int puttext_98(int c, int r, int c2, int r2, void *buf)
++{
++  unsigned short *abuf, *tbuf;
++  unsigned char *ap, *tp;
++  int i, j, dc = c2-c+1;
++
++  if ( c <= 0 || r <= 0 || c > c2 || r > r2 )
++    return 0;
++
++  j = dc * (r2-r+1);
++  i = j * 2;
++  abuf = (unsigned short *)malloc(i);
++  tbuf = (unsigned short *)malloc(i);
++  if ( !abuf || !tbuf ) {
++    if ( abuf ) free(abuf);
++    if ( tbuf ) free(tbuf);
++    return 0;
++  }
++
++  memcpy(abuf, buf, i);
++  memcpy(tbuf, buf, i);
++  for(i = 0; i < j; i++) {
++    abuf[i]  = TXA_98AT(abuf[i] >> 8);
++    tbuf[i] &= 0x00ff;
++  }
++
++  ap = (unsigned char *)abuf;
++  tp = (unsigned char *)tbuf;
++  dc *= 2;
++  r--, r2--, c--, c2--;
++  for (; r <= r2; r++) {
++    dosmemput(tp, dc, VIDADDR(r, c));
++    dosmemput(ap, dc, VIDADDR(r, c) + 0x2000);
++    ap += dc;
++    tp += dc;
++  }
++  free(abuf);
++  free(tbuf);
++  return 1;
++}
++
++int gettext_98(int c, int r, int c2, int r2, void *buf)
++{
++  unsigned short *abuf, *tbuf;
++  unsigned char *ap, *tp, *wp;
++  int i, j, dc = c2-c+1;
++
++  if ( c <= 0 || r <= 0 || c > c2 || r > r2 )
++    return 0;
++
++  j = dc * (r2-r+1);
++  i = j * 2;
++  abuf = (unsigned short *)malloc(i);
++  tbuf = (unsigned short *)malloc(i);
++  if ( !abuf || !tbuf ) {
++    if ( abuf ) free(abuf);
++    if ( tbuf ) free(tbuf);
++    return 0;
++  }
++
++  ap = (unsigned char *)abuf;
++  tp = (unsigned char *)tbuf;
++  wp = buf;
++  dc *= 2;
++  r--, r2--, c--, c2--;
++  for (; r <= r2; r++) {
++    dosmemget(VIDADDR(r, c), dc, tp);
++    dosmemget(VIDADDR(r, c)+0x2000, dc, ap);
++    ap += dc;
++    tp += dc;
++  }
++  for(i = 0; i < j; i++) {
++    wp[i*2]   = (unsigned char)tbuf[i];
++    wp[i*2+1] = TXA_AT98(abuf[i]);
++  }
++  free(abuf);
++  free(tbuf);
++  return 1;
++}
++
++void textmode_98(int mode)
++{
++  gppconio_init();
++}
++
++void _setcursortype_98(int type)
++{
++  __dpmi_regs r;
++  switch ( type ) {
++  case _NOCURSOR:
++    r.h.ah = 0x12;
++    __dpmi_int(0x18, &r);
++    break;
++  default:	/* _SOLIDCURSOR: _NORMALCURSOR: */
++    r.x.ax = 0x1000;
++    __dpmi_int(0x18, &r);
++    r.h.ah = 0x11;
++    __dpmi_int(0x18, &r);
++    break;
++  }
++}
++
++static void fillrow_98(int row, int left, int right, int fill)
++{
++  int col;
++  unsigned short filler[right-left+1], cfill;
++
++  cfill = fill & 0x00ff;
++  for (col = left; col <= right; col++)
++    filler[col-left] = cfill;
++  dosmemput(filler, (right-left+1)*2, VIDADDR(row, left));
++  cfill = fill >> 8; cfill = (unsigned short)TXA_98AT(cfill);
++  for (col = left; col <= right; col++)
++    filler[col-left] = cfill;
++  dosmemput(filler, (right-left+1)*2, VIDADDR(row, left)+0x2000);
++}
++
++void clrscr_98(void)
++{
++  unsigned short tfiller[txinfo.winright - txinfo.winleft + 1];
++  unsigned short afiller[txinfo.winright - txinfo.winleft + 1];
++  unsigned short cfill = (unsigned short)TXA_98AT(ScreenAttrib);
++  int row, col;
++
++  for (col=0; col < txinfo.winright - txinfo.winleft + 1; col++) {
++    tfiller[col] = (unsigned short)' ';
++    afiller[col] = cfill;
++  }
++  for (row=txinfo.wintop-1; row < txinfo.winbottom; row++) {
++    dosmemput(tfiller, (txinfo.winright - txinfo.winleft + 1)*2,
++	      VIDADDR(row, txinfo.winleft - 1));
++    dosmemput(afiller, (txinfo.winright - txinfo.winleft + 1)*2,
++	      VIDADDR(row, txinfo.winleft - 1)+0x2000);
++  }
++  gotoxy(1, 1);
++}
++
++void insline_98(void)
++{
++  int row, col, left, right, nbytes, bot, fill;
++  ScreenGetCursor(&row, &col);
++  left = txinfo.winleft - 1;
++  right = txinfo.winright - 1;
++  nbytes = (right-left+1)*2;
++  bot = txinfo.winbottom-1;
++  fill = ' ' | (ScreenAttrib << 8);
++  while (bot > row) {
++    movedata(_dos_ds, VIDADDR(bot-1, left),
++	     _dos_ds, VIDADDR(bot, left), nbytes);
++    movedata(_dos_ds, VIDADDR(bot-1, left)+0x2000,
++	     _dos_ds, VIDADDR(bot, left)+0x2000, nbytes);
++    bot--;
++  }
++  fillrow_98(row,left,right,fill);
++}
++
++void delline_98(void)
++{
++  int row, col, left, right, nbytes, bot, fill;
++  ScreenGetCursor(&row, &col);
++  left = txinfo.winleft - 1;
++  right = txinfo.winright - 1;
++  nbytes = (right-left+1)*2;
++  bot = txinfo.winbottom-1;
++  fill = ' ' | (ScreenAttrib << 8);
++  while (row < bot) {
++    movedata(_dos_ds, VIDADDR(row+1, left),
++	     _dos_ds, VIDADDR(row, left), nbytes);
++    movedata(_dos_ds, VIDADDR(row+1, left)+0x2000,
++	     _dos_ds, VIDADDR(row, left)+0x2000, nbytes);
++    row++;
++  }
++  fillrow_98(bot,left,right,fill);
++}
++
++int cputs_98(const char *s)
++{
++  int row, col;
++  const unsigned char *ss = (const unsigned char *)s;
++  unsigned short *viaddr;
++  unsigned short c, sa = TXA_98AT(ScreenAttrib);
++  ScreenGetCursor(&row, &col);
++  viaddr = (unsigned short *)VIDADDR(row, col);
++
++  while ((c = *ss++)) {
++    switch ( c ) {
++    case '\n':
++      row++;
++      viaddr += txinfo.screenwidth;
++      break;
++    case '\r':
++      col = txinfo.winleft - 1;
++      viaddr = (unsigned short *)VIDADDR(row,col);
++      break;
++    case '\b':
++      if (col > txinfo.winleft-1) {
++	col--;
++	viaddr--;
++      } else if (row > txinfo.wintop-1) {
++	row--;
++	col = txinfo.winright-1;
++	viaddr = (unsigned short *)VIDADDR(row,col);
++      }
++      break;
++    case 0x07:
++      bell();
++      break;
++    default:
++      dosmemput(&c,  2, (int)viaddr);
++      dosmemput(&sa, 2, (int)viaddr+0x2000);
++      viaddr++;
++      col++;
++    }
++
++    if (col >= txinfo.winright) {
++      col = txinfo.winleft - 1;
++      row++;
++      viaddr = (unsigned short *)VIDADDR(row,col);
++    }
++    if (row >= txinfo.winbottom) {
++      ScreenSetCursor(txinfo.wintop-1, txinfo.winleft-1);
++      delline();
++      row--;
++      viaddr -= txinfo.screenwidth;
++    }
++  }
++
++  ScreenSetCursor(row, col);
++  txinfo.cury = row - txinfo.wintop + 2;
++  txinfo.curx = col - txinfo.winleft + 2;
++  return(*(--ss));
++}
++
++static void bell_98(void)
++{
++  __dpmi_regs r;
++  r.h.ah = 0x07;
++  __dpmi_int(0x29, &r);
++}
++
++static int get_screenattrib_98(void)
++{
++  int row, col;
++  ScreenGetCursor(&row, &col);
++  return TXA_AT98(_farpeekb(_dos_ds, VIDADDR(row,col)+0x2000));
++}
++
++void _set_screen_lines_98(int nlines)
++{
++  /* Not implemented yet */
++}
++
++void blinkvideo_98(void)
++{
++  /* PC-AT: Set intensity/blinking bit to BLINKING. */
++  /* PC-98: Set ATR4 to VL */
++  outportb(0x68, 0x00);
++}
++
++void intensevideo_98(void)
++{
++  /* PC-AT: Set intensity/blinking bit to INTENSE (bright background). */
++  /* PC-98: Set ATR4 to BG */
++  outportb(0x68, 0x01);
++}
++
++/***
++ * Jump Table
++ **/
++
++static int (*_puttext_jmp_tbl[])(int c, int r, int c2, int r2, void *buf) = {
++  puttext_at,
++  puttext_98
++};
++
++static int (*_gettext_jmp_tbl[])(int c, int r, int c2, int r2, void *buf) = {
++  gettext_at,
++  gettext_98
++};
++
++static void (*_textmode_jmp_tbl[])(int mode) = {
++  textmode_at,
++  textmode_98
++};
++
++static void (*_setcursortype_jmp_tbl[])(int type) = {
++  _setcursortype_at,
++  _setcursortype_98,
++};
++
++static void (*_fillrow_jmp_tbl[])(int row, int left, int right, int fill) = {
++  fillrow_at,
++  fillrow_98
++};
++
++static void (*_clrscr_jmp_tbl[])(void) = {
++  clrscr_at,
++  clrscr_98
++};
++
++static void (*_insline_jmp_tbl[])(void) = {
++  insline_at,
++  insline_98
++};
++
++static void (*_delline_jmp_tbl[])(void) = {
++  delline_at,
++  delline_98
++};
++
++static void (*_bell_jmp_tbl[])(void) = {
++  bell_at,
++  bell_98
++};
++
++static int (*_get_screenattrib_jmp_tbl[])(void) = {
++  get_screenattrib_at,
++  get_screenattrib_98
++};
++
++static int (*_cputs_jmp_tbl[])(const char *s) = {
++  cputs_at,
++  cputs_98
++};
++
++static void (*_set_screen_lines_jmp_tbl[])(int nlines) = {
++  _set_screen_lines_at,
++  _set_screen_lines_98
++};
++
++static void (*_blinkvideo_jmp_tbl[])(void) = {
++  blinkvideo_at,
++  blinkvideo_98
++};
++
++static void (*_intensevideo_jmp_tbl[])(void) = {
++  intensevideo_at,
++  intensevideo_98
++};
++
++int puttext(int c, int r, int c2, int r2, void *buf)
++{
++  return (*_puttext_jmp_tbl[__crt0_mtype >> 4])(c, r, c2, r2, buf);
++}
++
++int gettext(int c, int r, int c2, int r2, void *buf)
++{
++  return (*_gettext_jmp_tbl[__crt0_mtype >> 4])(c, r, c2, r2, buf);
++}
++
++void textmode(int mode)
++{
++  (*_textmode_jmp_tbl[__crt0_mtype >> 4])(mode);
++}
++
++void _setcursortype(int type)
++{
++  (*_setcursortype_jmp_tbl[__crt0_mtype >> 4])(type);
++}
++
++void  fillrow(int row, int left, int right, int fill)
++{
++  (*_fillrow_jmp_tbl[__crt0_mtype >> 4])(row, left, right, fill);
++}
++
++void clrscr(void)
++{
++  (*_clrscr_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++void insline(void)
++{
++  if (__crt0_mtype == DOSV)
++    insline_dv();
++  else
++    (*_insline_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++void delline(void)
++{
++  if (__crt0_mtype == DOSV)
++    delline_dv();
++  else
++    (*_delline_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++static
++void bell(void)
++{
++  (*_bell_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++static
++int get_screenattrib(void)
++{
++  return (*_get_screenattrib_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++int cputs(const char *s)
++{
++  if (__crt0_mtype == DOSV)
++    return cputs_dv(s);
++  else
++    return (*_cputs_jmp_tbl[__crt0_mtype >> 4])(s);
++}
++
++void _set_screen_lines(int nlines)
++{
++  (*_set_screen_lines_jmp_tbl[__crt0_mtype >> 4])(nlines);
++}
++
++void blinkvideo(void)
++{
++  (*_blinkvideo_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++void intensevideo(void)
++{
++  (*_intensevideo_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/co80/scattrib.c src/libc/pc_hw/co80/scattrib.c
+--- src.org/libc/pc_hw/co80/scattrib.c	Sat Mar 11 21:30:14 1995
++++ src/libc/pc_hw/co80/scattrib.c	Sun Nov 12 00:00:00 2000
+@@ -1,4 +1,70 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ unsigned char ScreenAttrib = 0x07;
++
++/*****************************************************************************
++    ・PC-9800 attribute			・PC-AT attribute
++	bit 76543210			    bit 76543210
++	    GRBVURBS				*RGBHRGB
++	       LLVLT				||  +------ Fore Color
++	       ||||+--- ~Secret			|+--------- Back Color
++	       |||+---- Blink			+---------- Blink / Intense
++	       ||+----- Reverse
++	       |+------ Under Line
++	       +------- Vertical Line
++ *****************************************************************************/
++
++unsigned char conv_98at_txatbl[256] = {
++/*[エミュレーションに関する問題点]**********************************************
++    ・Back Color が黒の高輝度	: Under Line
++    ・Fore Color が黒の時のみ	: Reverse
++    ・その他は Fore Color のみ合わせる
++  黒  暗青 暗緑 暗水 暗赤 暗紫 暗黄 明灰 暗灰 明青 明緑 明水 明赤 明紫 明黄  白
++ *******************************************************************************/
++ 0x01,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe9,0x29,0x89,0xa9,0x49,0x69,0xc9,0xe9,
++ 0x25,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x85,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0xa5,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x45,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x65,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0xc5,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0xe5,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x01,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x25,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x85,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0xa5,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x45,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0x65,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0xc5,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,
++ 0xe5,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1,0xe1,0x21,0x81,0xa1,0x41,0x61,0xc1,0xe1
++};
++
++unsigned char conv_at98_txatbl[256] = {
++/*[エミュレーションに関する問題点]**********************************************
++    ・Blink		: 無視
++    ・Under Line	: 高輝度
++    ・Vertical Line	: 無視
++ 0000 0001 0010 0011 0100 0101 0110 0111 1000 1001 1010 1011 1100 1101 1110 1111
++    S        BS   B   R S  R    RBS  RB  U  S U    U BS U B  UR S UR   URBS URB
++    T        LT   L   V T  V    VLT  VL  L  T L    L LT L L  LV T LV   LVLT LVL
++ *******************************************************************************/
++ 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++ 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
++ 0x00,0x01,0x00,0x01,0x11,0x10,0x11,0x10,0x00,0x09,0x00,0x09,0x99,0x90,0x99,0x90,
++ 0x00,0x01,0x00,0x01,0x11,0x10,0x11,0x10,0x00,0x09,0x00,0x09,0x99,0x90,0x99,0x90,
++ 0x00,0x04,0x00,0x04,0x44,0x40,0x44,0x40,0x00,0x0c,0x00,0x0c,0xcc,0xc0,0xcc,0xc0,
++ 0x00,0x04,0x00,0x04,0x44,0x40,0x44,0x40,0x00,0x0c,0x00,0x0c,0xcc,0xc0,0xcc,0xc0,
++ 0x00,0x05,0x00,0x05,0x55,0x50,0x55,0x50,0x00,0x0d,0x00,0x0d,0xdd,0xd0,0xdd,0xd0,
++ 0x00,0x05,0x00,0x05,0x55,0x50,0x55,0x50,0x00,0x0d,0x00,0x0d,0xdd,0xd0,0xdd,0xd0,
++ 0x00,0x02,0x00,0x02,0x22,0x20,0x22,0x20,0x00,0x0a,0x00,0x0a,0xaa,0xa0,0xaa,0xa0,
++ 0x00,0x02,0x00,0x02,0x22,0x20,0x22,0x20,0x00,0x0a,0x00,0x0a,0xaa,0xa0,0xaa,0xa0,
++ 0x00,0x03,0x00,0x03,0x33,0x30,0x33,0x30,0x00,0x0b,0x00,0x0b,0xbb,0xb0,0xbb,0xb0,
++ 0x00,0x03,0x00,0x03,0x33,0x30,0x33,0x30,0x00,0x0b,0x00,0x0b,0xbb,0xb0,0xbb,0xb0,
++ 0x00,0x06,0x00,0x06,0x66,0x60,0x66,0x60,0x00,0x0e,0x00,0x0e,0xee,0xe0,0xee,0xe0,
++ 0x00,0x06,0x00,0x06,0x66,0x60,0x66,0x60,0x00,0x0e,0x00,0x0e,0xee,0xe0,0xee,0xe0,
++ 0x00,0x07,0x00,0x07,0x77,0x70,0x77,0x70,0x00,0x0f,0x00,0x0f,0xff,0xf0,0xff,0xf0,
++ 0x00,0x07,0x00,0x07,0x77,0x70,0x77,0x70,0x00,0x0f,0x00,0x0f,0xff,0xf0,0xff,0xf0
++};
+diff -urN src.org/libc/pc_hw/co80/scclear.c src/libc/pc_hw/co80/scclear.c
+--- src.org/libc/pc_hw/co80/scclear.c	Sat Mar 11 21:31:32 1995
++++ src/libc/pc_hw/co80/scclear.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,10 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenClear(void)
++ScreenClear_at(void)
+ {
+   int i = ScreenRows() * ScreenCols();
+   unsigned sp = co80;
+@@ -12,4 +14,24 @@
+     _farnspokew(sp, a);
+     sp += 2;
+   } while (--i);
++  if (__crt0_mtype == DOSV) UpdateDOSV(0, 0, 0);
++}
++
++void ScreenClear_98(void)
++{
++  __dpmi_regs r;
++  r.h.ah = 0x16;
++  r.h.dh = TXA_98AT(ScreenAttrib);
++  r.h.dl = ' ';
++  __dpmi_int(0x18, &r);
++}
++
++static void (*_ScreenClear_jmp_tbl[])(void) = {
++  ScreenClear_at,
++  ScreenClear_98
++};
++
++void ScreenClear(void)
++{
++  (*_ScreenClear_jmp_tbl[__crt0_mtype >> 4])();
+ }
+diff -urN src.org/libc/pc_hw/co80/sccols.c src/libc/pc_hw/co80/sccols.c
+--- src.org/libc/pc_hw/co80/sccols.c	Sat Mar 11 21:30:38 1995
++++ src/libc/pc_hw/co80/sccols.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,31 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ int	
+-ScreenCols(void)
++ScreenCols_at(void)
+ {
+   return _farpeekw(dossel, 0x44a);
+ }
++
++int ScreenCols_98(void)
++{
++  __dpmi_regs r;
++  if ( __crt0_mtype == PC98H ) {
++    r.x.ax = 0x25ff;
++    __dpmi_int(0x18, &r);
++    return r.h.al - 1;
++  } else
++    return 80;
++}
++
++static int (*_ScreenCols_jmp_tbl[])(void) = {
++  ScreenCols_at,
++  ScreenCols_98
++};
++
++int ScreenCols(void)
++{
++  return (*_ScreenCols_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/co80/scgetc.c src/libc/pc_hw/co80/scgetc.c
+--- src.org/libc/pc_hw/co80/scgetc.c	Sat Mar 11 21:31:20 1995
++++ src/libc/pc_hw/co80/scgetc.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,10 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenGetCursor(int *_row, int *_col)
++ScreenGetCursor_at(int *_row, int *_col)
+ {
+   __dpmi_regs r;
+   r.h.ah = 3;
+@@ -11,3 +13,19 @@
+   *_row = r.h.dh;
+   *_col = r.h.dl;
+ }
++
++void ScreenGetCursor_98(int *_row, int *_col)
++{
++  *_row = _farpeekb(dossel, 0x710);
++  *_col = _farpeekb(dossel, 0x71C);
++}
++
++static void (*_ScreenGetCursor_jmp_tbl[])(int *row, int *col) = {
++  ScreenGetCursor_at,
++  ScreenGetCursor_98
++};
++
++void ScreenGetCursor(int *row, int *col)
++{
++  return (*_ScreenGetCursor_jmp_tbl[__crt0_mtype >> 4])(row, col);
++}
+diff -urN src.org/libc/pc_hw/co80/scgetch.c src/libc/pc_hw/co80/scgetch.c
+--- src.org/libc/pc_hw/co80/scgetch.c	Thu Jul 25 18:01:20 1996
++++ src/libc/pc_hw/co80/scgetch.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,10 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenGetChar(int *_ch, int *_attr, int _x, int _y)
++ScreenGetChar_at(int *_ch, int *_attr, int _x, int _y)
+ {
+   int s;
+ 
+@@ -16,3 +18,29 @@
+   if (_attr)
+     *_attr = (s >> 8) & 0xff;
+ }
++
++void ScreenGetChar_98(int *_ch, int *_attr, int _x, int _y)
++{
++  int s;
++
++  if ((_x < 0) || (_y < 0))
++    return;
++  if ((_x >= ScreenCols()) || (_y >= ScreenRows()))
++    return;
++  s = _farpeekw(dossel, co80 + (_x+_y*ScreenCols())*2);
++  if (_ch)
++    *_ch = s & 0xff;
++  s = _farpeekw(dossel, co80 + (_x+_y*ScreenCols())*2 + 0x2000);
++  if (_attr)
++    *_attr = TXA_AT98(s);
++}
++
++static void (*_ScreenGetChar_jmp_tbl[])(int *_ch, int *_attr, int _x, int _y) = {
++  ScreenGetChar_at,
++  ScreenGetChar_98
++};
++
++void ScreenGetChar(int *_ch, int *_attr, int _x, int _y)
++{
++  return (*_ScreenGetChar_jmp_tbl[__crt0_mtype >> 4])(_ch, _attr, _x, _y);
++}
+diff -urN src.org/libc/pc_hw/co80/scmode.c src/libc/pc_hw/co80/scmode.c
+--- src.org/libc/pc_hw/co80/scmode.c	Sun Jun  4 03:32:16 1995
++++ src/libc/pc_hw/co80/scmode.c	Sun Nov 12 00:00:00 2000
+@@ -1,10 +1,29 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <go32.h>
+ #include <libc/farptrgs.h>
+ #include <pc.h>
++#include <libc/pc9800.h>
+ 
+ int
+-ScreenMode(void)
++ScreenMode_at(void)
+ {
+   return _farpeekb(_dos_ds, 0x449);
+ }
++
++int ScreenMode_98(void)
++{
++  if (_farpeekb(_dos_ds, 0x501) & 0x08)
++    return 0x12; /* hireso */
++  return 0x03;  /* normal */
++}
++
++static int (*_ScreenMode_jmp_tbl[])(void) = {
++  ScreenMode_at,
++  ScreenMode_98
++};
++
++int ScreenMode(void)
++{
++  return (*_ScreenMode_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/co80/scputc.c src/libc/pc_hw/co80/scputc.c
+--- src.org/libc/pc_hw/co80/scputc.c	Sat Mar 11 21:30:50 1995
++++ src/libc/pc_hw/co80/scputc.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,10 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenPutChar(int _ch, int _attr, int _x, int _y)
++ScreenPutChar_at(int _ch, int _attr, int _x, int _y)
+ {
+   if ((_x < 0) || (_y < 0))
+     return;
+@@ -11,4 +13,29 @@
+   _ch &= 0xff;
+   _attr = (_attr & 0xff) << 8;
+   _farpokew(dossel, co80 + (_x+_y*ScreenCols())*2, _ch|_attr);
++  if (__crt0_mtype == DOSV) UpdateDOSV(_y, _x, 1);
++}
++
++void ScreenPutChar_98(int _ch, int _attr, int _x, int _y )
++{
++  unsigned int scptr;
++
++  if ((_x < 0) || (_y < 0))
++    return;
++  if ((_x >= ScreenCols_98()) || (_y >= ScreenRows_98()))
++    return;
++  _attr = (unsigned int)TXA_98AT(_attr);
++  scptr = (unsigned int)(co80 + 2*(_x + _y*ScreenCols_98()));
++  _farpokeb(dossel, scptr, (unsigned char)_ch);
++  _farpokeb(dossel, scptr+0x2000, (unsigned char)_attr);
++}
++
++static void (*_ScreenPutChar_jmp_tbl[])(int _ch, int _attr, int _x, int _y) = {
++  ScreenPutChar_at,
++  ScreenPutChar_98
++};
++
++void ScreenPutChar(int _ch, int _attr, int _x, int _y)
++{
++  (*_ScreenPutChar_jmp_tbl[__crt0_mtype >> 4])(_ch, _attr, _x, _y);
+ }
+diff -urN src.org/libc/pc_hw/co80/scputs.c src/libc/pc_hw/co80/scputs.c
+--- src.org/libc/pc_hw/co80/scputs.c	Sat Mar 11 21:57:46 1995
++++ src/libc/pc_hw/co80/scputs.c	Sun Nov 12 00:00:00 2000
+@@ -1,10 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenPutString(const char *_ch, int _attr, int _x, int _y)
++ScreenPutString_at(const char *_ch, int _attr, int _x, int _y)
+ {
+-  int scptr;
++  int scptr, chars = 0;
+   if ((_x < 0) || (_y < 0))
+     return;
+   if ((_x >= ScreenCols()) || (_y >= ScreenRows()))
+@@ -17,5 +19,35 @@
+     _farnspokew(scptr, (*_ch & 0xff)|_attr);
+     _ch++;
+     scptr += 2;
++    chars++;
+   }
++  if (__crt0_mtype == DOSV) UpdateDOSV(_y, _x, chars);
++}
++
++void ScreenPutString_98(const char *_ch, int _attr, int _x, int _y)
++{
++  unsigned int scptr;
++  if ((_x < 0) || (_y < 0))
++    return;
++  if ((_x >= ScreenCols_98()) || (_y >= ScreenRows_98()))
++    return;
++  _attr = (unsigned int)TXA_98AT(_attr);
++  scptr = (unsigned int)(co80 + 2*(_x + _y*ScreenCols_98()));
++  _farsetsel(dossel);
++  while (*_ch) {
++    _farnspokeb(scptr, (unsigned char)(*_ch));
++    _farnspokeb(scptr+0x2000, (unsigned char)_attr);
++    _ch++;
++    scptr += 2;
++  }
++}
++
++static void (*_ScreenPutString_jmp_tbl[])(const char *_ch, int _attr, int _x, int _y) = {
++  ScreenPutString_at,
++  ScreenPutString_98
++};
++
++void ScreenPutString(const char *_ch, int _attr, int _x, int _y)
++{
++  (*_ScreenPutString_jmp_tbl[__crt0_mtype >> 4])(_ch, _attr, _x, _y);
+ }
+diff -urN src.org/libc/pc_hw/co80/scretr.c src/libc/pc_hw/co80/scretr.c
+--- src.org/libc/pc_hw/co80/scretr.c	Sat Mar 11 21:32:10 1995
++++ src/libc/pc_hw/co80/scretr.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,36 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenRetrieve(void *_virtual_screen)
++ScreenRetrieve_at(void *_virtual_screen)
+ {
+   movedata(dossel, co80,
+ 	   _my_ds(), (int)_virtual_screen,
+ 	   ScreenRows() * ScreenCols() * 2);
+ }
+ 
++void ScreenRetrieve_98(void *_virtual_screen)
++{
++  unsigned char *vscptr = _virtual_screen;
++  unsigned int i, j, scptr;
++
++  j = ScreenRows_98() * ScreenCols_98();
++  movedata(dossel, co80,
++	   _my_ds(), (int)_virtual_screen, j*2);
++
++  scptr = co80 + 0x2000;
++  for (i = 0; i < j; i++)
++    vscptr[i*2+1] = TXA_AT98(_farpeekb(dossel, scptr+i*2));
++}
++
++static void (*_ScreenRetrieve_jmp_tbl[])(void *virtual_screen) = {
++  ScreenRetrieve_at,
++  ScreenRetrieve_98
++};
++
++void ScreenRetrieve(void *_virtual_screen)
++{
++  return (*_ScreenRetrieve_jmp_tbl[__crt0_mtype >> 4])(_virtual_screen);
++}
+diff -urN src.org/libc/pc_hw/co80/scrows.c src/libc/pc_hw/co80/scrows.c
+--- src.org/libc/pc_hw/co80/scrows.c	Sat Mar 11 21:30:26 1995
++++ src/libc/pc_hw/co80/scrows.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,31 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ int	
+-ScreenRows(void)
++ScreenRows_at(void)
+ {
+   return _farpeekb(dossel, 0x484) + 1;
+ }
++
++int ScreenRows_98(void)
++{
++  __dpmi_regs r;
++  if ( __crt0_mtype == PC98H ) {
++    r.x.ax = 0x25ff;
++    __dpmi_int(0x18, &r);
++    return r.h.ah - 1;
++  } else
++    return _farpeekb(dossel, 0x712) + 1;
++}
++
++static int (*_ScreenRows_jmp_tbl[])(void) = {
++  ScreenRows_at,
++  ScreenRows_98
++};
++
++int ScreenRows(void)
++{
++  return (*_ScreenRows_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/co80/scsetc.c src/libc/pc_hw/co80/scsetc.c
+--- src.org/libc/pc_hw/co80/scsetc.c	Sat Mar 11 21:31:00 1995
++++ src/libc/pc_hw/co80/scsetc.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,10 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenSetCursor(int _row, int _col)
++ScreenSetCursor_at(int _row, int _col)
+ {
+   __dpmi_regs r;
+   r.h.ah = 2;
+@@ -11,3 +13,23 @@
+   r.h.dl = _col;
+   __dpmi_int(0x10, &r);
+ }
++
++void ScreenSetCursor_98(int _row, int _col)
++{
++  __dpmi_regs r;
++  r.h.ah = 0x03;
++  r.h.cl = 0x10;
++  r.h.dh = _row;
++  r.h.dl = _col;
++  __dpmi_int(0xDC, &r);
++}
++
++static void (*_ScreenSetCursor_jmp_tbl[])(int row, int col) = {
++  ScreenSetCursor_at,
++  ScreenSetCursor_98
++};
++
++void ScreenSetCursor(int row, int col)
++{
++  return (*_ScreenSetCursor_jmp_tbl[__crt0_mtype >> 4])(row, col);
++}
+diff -urN src.org/libc/pc_hw/co80/scupdate.c src/libc/pc_hw/co80/scupdate.c
+--- src.org/libc/pc_hw/co80/scupdate.c	Thu Jul 25 19:04:52 1996
++++ src/libc/pc_hw/co80/scupdate.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,49 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
++#include <malloc.h>
+ 
+ void	
+-ScreenUpdate(const void *_virtual_screen)
++ScreenUpdate_at(const void *_virtual_screen)
+ {
+   movedata(_my_ds(), (int)_virtual_screen,
+ 	   dossel, co80,
+ 	   ScreenRows() * ScreenCols() * 2);
++  if (__crt0_mtype == DOSV) UpdateDOSV(0, 0, 0);
++}
++
++void ScreenUpdate_98(const void *_virtual_screen)
++{
++  unsigned char *scptr;
++  unsigned int i, j;
++
++  j = ScreenRows_98() * ScreenCols_98();
++  scptr = malloc(j*2);
++  if (!scptr)
++    return;
++
++  memcpy(scptr, _virtual_screen, j*2);
++  for (i = 0; i < j; i++)
++    scptr[i*2+1] = 0;
++  movedata(_my_ds(), (unsigned int)scptr,
++	   dossel, co80, j*2);
++  memcpy(scptr, _virtual_screen, j*2);
++  for (i = 0; i < j; i++)
++    scptr[i*2] = TXA_98AT(scptr[i*2+1]);
++  movedata(_my_ds(), (unsigned int)scptr,
++	   dossel, co80+0x2000, j*2);
++
++  free(scptr);
++}
++
++static void (*_ScreenUpdate_jmp_tbl[])(const void *_virtual_screen) = {
++  ScreenUpdate_at,
++  ScreenUpdate_98
++};
++
++void ScreenUpdate(const void *_virtual_screen)
++{
++  (*_ScreenUpdate_jmp_tbl[__crt0_mtype >> 4])(_virtual_screen);
+ }
+diff -urN src.org/libc/pc_hw/co80/scupdl.c src/libc/pc_hw/co80/scupdl.c
+--- src.org/libc/pc_hw/co80/scupdl.c	Thu Jul 25 19:05:00 1996
++++ src/libc/pc_hw/co80/scupdl.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,36 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void	
+-ScreenUpdateLine(const void *_virtual_screen_line, int _row)
++ScreenUpdateLine_at(const void *_virtual_screen_line, int _row)
+ {
+   movedata(_my_ds(), (int)_virtual_screen_line,
+ 	   dossel, co80 + ScreenCols() * 2 * _row,
+ 	   ScreenCols() * 2);
++  if (__crt0_mtype == DOSV) UpdateDOSV(_row, 0, ScreenCols());
++}
++
++void ScreenUpdateLine_98(const void *_virtual_screen_line, int _row)
++{
++  unsigned int i, scptr, col=ScreenCols_98();
++  unsigned char *p=(unsigned char *)(unsigned int)_virtual_screen_line;
++
++  scptr = co80 + col*2*_row;
++  for (i = 0; i < col; i++, scptr+=2) {
++    _farpokew(dossel, scptr, (unsigned short)*p); p++;
++    _farpokew(dossel, scptr+0x2000, (unsigned short)TXA_98AT(*p)); p++;
++  }
++}
++
++static void (*_ScreenUpdateLine_jmp_tbl[])(const void *_virtual_screen_line, int _row) = {
++  ScreenUpdateLine_at,
++  ScreenUpdateLine_98
++};
++
++void ScreenUpdateLine(const void *_virtual_screen_line, int _row)
++{
++  (*_ScreenUpdateLine_jmp_tbl[__crt0_mtype >> 4])(_virtual_screen_line, _row);
+ }
+diff -urN src.org/libc/pc_hw/co80/scvbell.c src/libc/pc_hw/co80/scvbell.c
+--- src.org/libc/pc_hw/co80/scvbell.c	Wed Sep  6 02:21:38 1995
++++ src/libc/pc_hw/co80/scvbell.c	Sun Nov 12 00:00:00 2000
+@@ -1,9 +1,11 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <dos.h>
+ #include "sc.h"
++#include <libc/pc9800.h>
+ 
+ void
+-ScreenVisualBell(void)
++ScreenVisualBell_at(void)
+ {
+   int j = ScreenRows() * ScreenCols();
+   int _nblinks = 2;
+@@ -16,6 +18,34 @@
+       _farnspokew(sp, _farnspeekw(sp) ^ 0x7f00);
+       sp += 2;
+     } while (--i);
++    if (__crt0_mtype == DOSV) UpdateDOSV(0, 0, 0);
+     delay(100);
+   }
+ }
++
++void ScreenVisualBell_98(void)
++{
++  int j = ScreenRows() * ScreenCols();
++  int _nblinks = 2;
++  _farsetsel(dossel);
++  while (_nblinks--)
++  {
++    unsigned sp = co80 + 0x2000;
++    int i = j;
++    do {
++      _farnspokew(sp, _farnspeekw(sp) ^ 0x0004);
++      sp += 2;
++    } while (--i);
++    delay(100);
++  }
++}
++
++static void (*_ScreenVisualBell_jmp_tbl[])(void) = {
++  ScreenVisualBell_at,
++  ScreenVisualBell_98
++};
++
++void ScreenVisualBell(void)
++{
++  (*_ScreenVisualBell_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/kb/getkey.c src/libc/pc_hw/kb/getkey.c
+--- src.org/libc/pc_hw/kb/getkey.c	Sun Aug 31 12:08:34 1997
++++ src/libc/pc_hw/kb/getkey.c	Sun Nov 12 00:00:00 2000
+@@ -1,10 +1,14 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1997 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <pc.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
++#include <keys.h>
++#include <go32.h>
+ 
+ int
+-getkey(void)
++getkey_at(void)
+ {
+   __dpmi_regs r;
+   r.h.ah = 0x10;
+@@ -14,3 +18,206 @@
+     return 0x0100 | r.h.ah;
+   return r.h.al;
+ }
++
++int getkey_98(void)
++{
++  __dpmi_regs r;
++  r.h.ah = 0x00;
++  __dpmi_int(0x18, &r);
++  return conv_at98_pchwkey(r.h.ah, 0);
++}
++
++/*[エミュレーションに関する問題点]*****************************
++    ・キーコードの発生しないもの
++	K_Alt_LBracket		PC-9800 BIOS
++	K_Alt_RBracket		PC-9800 BIOS
++	K_Alt_Quote		キーが存在しない
++	K_Alt_F1...F10		PC-9800 BIOS
++	K_Control_Print		キーが存在しない
++	K_Control_Home		PC-9800 BIOS
++	K_Alt_1...4		PC-9800 BIOS
++	K_Alt_Equals		SHIFT + ALT の判定が面倒(^^;;
++	K_Alt_F11,12		PC-9800 BIOS
++	K_Control_Center	キーが存在しない
++	K_Alt_Enter		K_Alt_Return と区別できない
++	K_Control_EHome		PC-9800 BIOS
++ **************************************************************/
++
++unsigned short conv_at98_pchwkeytbl[PC98_KEYS][4] = {
++/* 0x00 */
++  { K_Escape, K_Escape, K_Escape, K_Alt_Escape },
++  { 0x31, K_ExclamationPoint, 0x31, K_Alt_1 },
++  { 0x32, K_DoubleQuote, 0x32, 0x179 },
++  { 0x33, K_Hash, 0x33, 0x17a },
++  { 0x34, K_Dollar, 0x34, 0x17b },
++  { 0x35, K_Percent, 0x35, 0x17c },
++  { 0x36, K_Ampersand, 0x36, 0x17d },
++  { 0x37, K_Quote, 0x37, 0x17e },
++  { 0x38, K_LParen, 0x38, 0x17f },
++  { 0x39, K_RParen, 0x39, 0x180 },
++  { 0x30, 0x0a, 0x30, 0x181 },
++  { K_Dash, K_Equals, K_Dash, 0x182 },
++  { K_Caret, K_BackQuote, K_Control_Caret, 0x129 },
++  { K_BackSlash, K_Pipe, K_Control_BackSlash, 0x12b },
++  { K_BackSpace, K_BackSpace, K_Control_Backspace, K_Alt_Backspace },
++  { K_Tab, K_BackTab, K_Tab, K_Alt_Tab },
++/* 0x10 */
++  { 0x71, 0x51, 0x11, K_Alt_Q },
++  { 0x77, 0x57, 0x17, K_Alt_W },
++  { 0x65, 0x45, 0x05, K_Alt_E },
++  { 0x72, 0x52, 0x12, K_Alt_R },
++  { 0x74, 0x54, 0x14, K_Alt_T },
++  { 0x79, 0x59, 0x19, K_Alt_Y },
++  { 0x75, 0x55, 0x15, K_Alt_U },
++  { 0x69, 0x49, 0x09, K_Alt_I },
++  { 0x6f, 0x4f, 0x0f, K_Alt_O },
++  { 0x70, 0x50, 0x10, K_Alt_P },
++  { K_At, K_Tilde, K_Control_At, 0x040 },
++  { K_LBracket, K_LBrace, K_Control_LBracket, 0x11a },
++  { K_Return, K_Return, K_Return, K_Alt_Return },
++  { 0x61, 0x41, 0x01, K_Alt_A },
++  { 0x73, 0x53, 0x13, K_Alt_S },
++  { 0x64, 0x44, 0x04, K_Alt_D },
++/* 0x20 */
++  { 0x66, 0x46, 0x06, K_Alt_F },
++  { 0x67, 0x47, 0x07, K_Alt_G },
++  { 0x68, 0x48, 0x08, K_Alt_H },
++  { 0x6a, 0x4a, 0x0a, K_Alt_J },
++  { 0x6b, 0x4b, 0x0b, K_Alt_K },
++  { 0x6c, 0x4c, 0x0c, K_Alt_L },
++  { K_SemiColon, K_Plus, K_SemiColon, 0x127 },
++  { K_Colon, K_Star, K_Colon, 0x03a },
++  { K_RBracket, K_RBrace, K_Control_RBracket, 0x11b },
++  { 0x7a, 0x5a, 0x1a, K_Alt_Z },
++  { 0x78, 0x58, 0x18, K_Alt_X },
++  { 0x63, 0x43, 0x03, K_Alt_C },
++  { 0x76, 0x56, 0x16, K_Alt_V },
++  { 0x62, 0x42, 0x02, K_Alt_B },
++  { 0x6e, 0x4e, 0x0e, K_Alt_N },
++  { 0x6d, 0x4d, 0x0d, K_Alt_M },
++/* 0x30 */
++  { K_Comma, K_LAngle, K_Comma, 0x133 },
++  { K_Period, K_RAngle, K_Period, 0x134 },
++  { K_Slash, K_QuestionMark, K_Slash, 0x135 },
++  { 0x00, K_UnderScore, K_Control_Underscore, 0x00 },
++  { 0x20, 0x20, 0x20, 0x20 },
++  { K_BackSpace, K_BackSpace, K_Control_Backspace, K_BackSpace },
++  { K_PageDown, K_PageDown, K_Control_PageDown, K_PageDown },
++  { K_PageUp, K_PageUp, K_Control_PageUp, K_PageUp },
++  { K_Insert, K_Insert, K_Control_Insert, K_Insert },
++  { K_Delete, K_Delete, K_Control_Delete, K_Delete },
++  { K_Up, K_Up, K_Control_Up, K_Up },
++  { K_Left, K_Left, K_Control_Left, K_Left },
++  { K_Right, K_Right, K_Control_Right, K_Right },
++  { K_Down, K_Down, K_Control_Down, K_Down },
++  { K_Home, K_Home, K_Control_Home, K_Home },
++  { K_End, K_End, K_Control_End, K_End },
++/* 0x40 */
++  { 0x2d, 0x2d, K_Control_KPDash, K_Alt_KPMinus },
++  { 0x2f, 0x2f, K_Control_KPSlash, K_Alt_KPSlash },
++  { 0x37, 0x37, 0x37, 0x37 },
++  { 0x38, 0x38, 0x38, 0x38 },
++  { 0x39, 0x39, 0x39, 0x39 },
++  { 0x2a, 0x2a, K_Control_KPStar, K_Alt_KPStar },
++  { 0x34, 0x34, 0x34, 0x34 },
++  { 0x35, 0x35, 0x35, 0x36 },
++  { 0x36, 0x36, 0x36, 0x36 },
++  { 0x2b, 0x2b, K_Control_KPPlus, K_Alt_KPPlus },
++  { 0x31, 0x31, 0x31, 0x31 },
++  { 0x32, 0x32, 0x32, 0x32 },
++  { 0x33, 0x33, 0x33, 0x33 },
++  { K_Equals, K_Equals, K_Equals, K_Equals },
++  { 0x30, 0x30, 0x30, 0x30 },
++  { K_Comma, K_Comma, K_Comma, K_Comma },
++/* 0x50 */
++  { K_Period, K_Period, K_Period, K_Period },
++  { K_LineFeed, K_LineFeed, K_LineFeed, K_LineFeed },
++  { K_F11, K_Control_F11, K_Shift_F11, K_Alt_F11 },
++  { K_F12, K_Control_F12, K_Shift_F12, K_Alt_F12 },
++  { K_F12, K_Control_F12, K_Shift_F12, K_Alt_F12 },
++  { K_F12, K_Control_F12, K_Shift_F12, K_Alt_F12 },
++  { K_F12, K_Control_F12, K_Shift_F12, K_Alt_F12 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++/* 0x60 */
++  { 0, 0, 0, 0 },
++  { 0, 0, 0, 0 },
++  { K_F1, K_Shift_F1, K_Control_F1, K_Alt_F1 },
++  { K_F2, K_Shift_F2, K_Control_F2, K_Alt_F2 },
++  { K_F3, K_Shift_F3, K_Control_F3, K_Alt_F3 },
++  { K_F4, K_Shift_F4, K_Control_F4, K_Alt_F4 },
++  { K_F5, K_Shift_F5, K_Control_F5, K_Alt_F5 },
++  { K_F6, K_Shift_F6, K_Control_F6, K_Alt_F6 },
++  { K_F7, K_Shift_F7, K_Control_F7, K_Alt_F7 },
++  { K_F8, K_Shift_F8, K_Control_F8, K_Alt_F8 },
++  { K_F9, K_Shift_F9, K_Control_F9, K_Alt_F9 },
++  { K_F10, K_Shift_F10, K_Control_F10, K_Alt_F10 } };
++
++int conv_at98_pchwkey(unsigned char ah, unsigned char xflag)
++{
++  int shift = 0, keycode, extkey = 0;
++  __dpmi_regs r;
++
++  if ( ah >= 0x80 ) {
++    if ( ah == 0xA1 || ah == 0xB1 ) {		/* NFER  : 0xA1 0xB1 */
++      ah = 0x51;
++    } else if ( ah == 0xA5 || ah == 0xB5 ) {	/* XFER  : 0xA5 0xB5 */
++      ah = 0x35;
++    } else if ( ah == 0xAE ) {			/* HOME  : 0xAE */
++      ah = 0x3E;
++    } else if ( ah >= 0xC0 ) {			/* VF1-5 : 0xC2-C6 */
++      ah &= 0x0f;
++      ah |= 0x50;
++    } else {					/* F1-10 : 0x82-8B 0x92-9B */
++      ah &= 0x0f;
++      ah |= 0x60;
++    }
++  }
++
++  if ( ah >= PC98_KEYS )
++    return 0;
++
++  r.h.ah = 2;
++  __dpmi_int(0x18, &r);
++  if ( r.h.al & 0x08 )		/* GRPH */
++    shift = 0x03;
++  else if ( r.h.al & 0x10 )	/* CTRL */
++    shift = 0x02;
++  else if ( r.h.al & 0x01 )	/* SHIFT */
++    shift = 0x01;
++
++  keycode = conv_at98_pchwkeytbl[ah][shift];
++
++  if ( r.h.al & 0x02 ) {	/* CAPS */
++    if ( 'a' <= keycode && keycode <= 'z' )
++      keycode &= 0xffdf;
++    else if ( 'A' <= keycode && keycode <= 'Z' )
++      keycode |= 0x0020;
++  }
++
++  if ( xflag && 0x36 <= ah && ah <= 0x3f ) {
++    if ( shift != 0x03 )
++      extkey = 0x0100;
++    else
++      extkey = 0x0050;
++  }
++
++  return keycode + extkey;
++}
++
++static int (*_getkey_jmp_tbl[])(void) = {
++  getkey_at,
++  getkey_98
++};
++
++int getkey(void)
++{
++  return (*_getkey_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/kb/getxkey.c src/libc/pc_hw/kb/getxkey.c
+--- src.org/libc/pc_hw/kb/getxkey.c	Sun Aug 31 12:08:34 1997
++++ src/libc/pc_hw/kb/getxkey.c	Sun Nov 12 00:00:00 2000
+@@ -1,10 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1997 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <pc.h>
+ #include <dpmi.h>
++#include <libc/pc9800.h>
+ 
+ int
+-getxkey(void)
++getxkey_at(void)
+ {
+   __dpmi_regs r;
+   r.h.ah = 0x10;
+@@ -16,3 +18,21 @@
+     return 0x0200 | r.h.ah;
+   return r.h.al;
+ }
++
++int getxkey_98(void)
++{
++  __dpmi_regs r;
++  r.h.ah = 0x00;
++  __dpmi_int(0x18, &r);
++  return conv_at98_pchwkey(r.h.ah, 1);
++}
++
++static int (*_getxkey_jmp_tbl[])(void) = {
++  getxkey_at,
++  getxkey_98
++};
++
++int getxkey(void)
++{
++  return (*_getxkey_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/kb/kbhit.c src/libc/pc_hw/kb/kbhit.c
+--- src.org/libc/pc_hw/kb/kbhit.c	Sun Jun  4 03:33:26 1995
++++ src/libc/pc_hw/kb/kbhit.c	Sun Nov 12 00:00:00 2000
+@@ -1,12 +1,14 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <pc.h>
+ #include <libc/farptrgs.h>
+ #include <dpmi.h>
+ #include <go32.h>
++#include <libc/pc9800.h>
+ 
+ 
+ int
+-kbhit(void)
++kbhit_at(void)
+ {
+   __dpmi_regs r;
+ 
+@@ -19,3 +21,21 @@
+     return 0;
+   return 1;
+ }
++
++int kbhit_98(void)
++{
++  __dpmi_regs r;
++  r.h.ah = 1;
++  __dpmi_int(0x18, &r);
++  return r.h.bh;
++}
++
++static int (*_kbhit_jmp_tbl[])(void) = {
++  kbhit_at,
++  kbhit_98
++};
++
++int kbhit(void)
++{
++  return (*_kbhit_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/mono/mono.c src/libc/pc_hw/mono/mono.c
+--- src.org/libc/pc_hw/mono/mono.c	Sun Oct  8 15:56:20 1995
++++ src/libc/pc_hw/mono/mono.c	Sun Nov 12 00:00:00 2000
+@@ -1,11 +1,14 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <sys/mono.h>
+ #include <libc/farptrgs.h>
+ #include <go32.h>
++#include <libc/pc9800.h>
+ 
+ static int initted = 0;
++static int bytes98 = 0, cols98 = 0, rows98 = 0;
+ 
+ #define TOPROW 5*160
+ #define BOTROW 20*160
+@@ -13,7 +16,7 @@
+ 
+ static int ofs=0;
+ 
+-void _mono_clear(void)
++void _mono_clear_at(void)
+ {
+   for (ofs=TOPROW; ofs<BOTROW; ofs += 2)
+     _farpokew(_dos_ds, 0xb0000+ofs, 0x0720);
+@@ -21,7 +24,7 @@
+   initted = 1;
+ }
+ 
+-void _mono_putc(int ch)
++void _mono_putc_at(int ch)
+ {
+   if (!initted)
+     _mono_clear();
+@@ -63,3 +66,68 @@
+     _mono_putc(buf[i]);
+   va_end(a);
+ }
++
++void _mono_clear_98(void)
++{
++  int i;
++
++  cols98 = ScreenCols_98();
++  rows98 = ScreenRows_98();
++  bytes98 = cols98 * rows98 * 2;
++  for (i = 0; i < bytes98; i+=2) {
++    _farpokew(_dos_ds, ScreenPrimary + i, 0x0000);
++    _farpokew(_dos_ds, ScreenPrimary + i + 0x2000, 0x00e1);
++  }
++  ofs = 0;
++  initted = 1;
++}
++
++void _mono_putc_98(int ch)
++{
++  int i;
++  if (!initted)
++    _mono_clear_98();
++  if (ofs >= bytes98) {
++    for (i = 0; i < bytes98-cols98*2; i+=2)
++      _farpokew(_dos_ds, ScreenPrimary + i,
++        _farpeekw(_dos_ds, ScreenPrimary + i + cols98*2));
++    for (; i < bytes98; i+=2)
++      _farpokew(_dos_ds, ScreenPrimary + i, 0x0020);
++    ofs -= cols98*2;
++  }
++  switch (ch) {
++  case '\n':
++    ofs += cols98*2;
++    break;
++  case '\r':
++    ofs -= ofs % (cols98*2);
++    break;
++  case '\b':
++    ofs -= 2;
++    break;
++  default:
++    _farpokew(_dos_ds, ScreenPrimary+ofs, (ch & 0xff));
++    ofs += 2;
++    break;
++  }
++}
++
++static void (*__mono_clear_jmp_tbl[])(void) = {
++  _mono_clear_at,
++  _mono_clear_98
++};
++
++static void (*__mono_putc_jmp_tbl[])(int ch) = {
++  _mono_putc_at,
++  _mono_putc_98
++};
++
++void _mono_clear(void)
++{
++  return (*__mono_clear_jmp_tbl[__crt0_mtype >> 4])();
++}
++
++void _mono_putc(int ch)
++{
++  return (*__mono_putc_jmp_tbl[__crt0_mtype >> 4])(ch);
++}
+diff -urN src.org/libc/pc_hw/sound/sound.c src/libc/pc_hw/sound/sound.c
+--- src.org/libc/pc_hw/sound/sound.c	Sat Feb 25 22:19:34 1995
++++ src/libc/pc_hw/sound/sound.c	Sun Nov 12 00:00:00 2000
+@@ -1,8 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <pc.h>
++#include <go32.h>
++#include <libc/pc9800.h>
++#include <sys/farptr.h>
+ 
+ void
+-sound(int freq)
++sound_at(int freq)
+ {
+   int scale;
+   if (freq == 0)
+@@ -16,3 +20,30 @@
+   outportb(0x42, scale >> 8);
+   outportb(0x61, inportb(0x61) | 3);
+ }
++
++void sound_98(int freq)
++{
++  int scale;
++  if (freq == 0) {
++    outportb(0x37, 0x07);
++    return;
++  }
++  if ( _farpeekb(_dos_ds, 0x00501) & 0x80 )
++    scale = 100 * 0x4e00 / freq;
++  else
++    scale = 100 * 0x6000 / freq;
++  outportb(0x3fdf, 0x76);
++  outportb(0x3fdb, scale & 0xff);
++  outportb(0x3fdb, scale >> 8);
++  outportb(0x37, 0x06);
++}
++
++static void (*_sound_jmp_tbl[])(int freq) = {
++  sound_at,
++  sound_98
++};
++
++void sound(int freq)
++{
++  (*_sound_jmp_tbl[__crt0_mtype >> 4])(freq);
++}
+diff -urN src.org/libc/pc_hw/timer/clock.c src/libc/pc_hw/timer/clock.c
+--- src.org/libc/pc_hw/timer/clock.c	Thu Jan 25 21:39:06 1996
++++ src/libc/pc_hw/timer/clock.c	Sun Nov 12 00:00:00 2000
+@@ -1,14 +1,17 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <time.h>
+ #include <go32.h>
+ #include <libc/farptrgs.h>
+ #include <libc/bss.h>
++#include <libc/pc9800.h>
++#include <pc.h>
+ 
+ static int clock_bss = -1;
+ 
+ clock_t
+-clock(void)
++clock_at(void)
+ {
+   static clock_t base = 0;
+   static unsigned long last_tics = 0;
+@@ -42,3 +45,52 @@
+   /* The 5 matches the scale for CLOCKS_PER_SEC */
+   return (rv - base) * 5;
+ }
++
++clock_t clock_98( void )
++{
++/*[エミュレーションに関する問題点]*****************************
++    ・タイムスタンパ低分解能使用	 307200/256Hz = 1200Hz
++    ・カレンダも使用するので時間がかかる(T_T)
++ **************************************************************/
++  static time_t   base_sec = 0;
++  static unsigned base_tic = 0;
++  time_t   rv_sec;
++  unsigned rv_tic, diff_sec, diff_tic;
++
++  if (clock_bss != __bss_count) {
++    clock_bss = __bss_count;
++    base_sec = 0;
++    base_tic = 0;
++  }
++
++  rv_sec = time(NULL);
++  rv_tic = inportw(0x5E);
++  if (base_sec == 0L) {
++    base_sec = rv_sec;
++    base_tic = rv_tic;
++  }
++
++  diff_sec = rv_sec - base_sec;
++  if ( __crt0_mtype == PC98H || _farpeekb(_dos_ds, 0x45B) & 0x04 ) {
++    diff_tic = rv_tic - base_tic;
++    if ( rv_tic < base_tic )
++      diff_tic += 0x10000;
++    if ( diff_tic > 0x8000 )
++      diff_sec -= 8;
++    else
++      diff_sec += 8;
++    diff_tic += (unsigned)(diff_sec * 1200 / 0x10000) * 0x10000;
++    return (clock_t)(diff_tic*CLOCKS_PER_SEC/1200);
++  } else
++    return (clock_t)(diff_sec*CLOCKS_PER_SEC);
++}
++
++static clock_t (*_clock_jmp_tbl[])(void) = {
++  clock_at,
++  clock_98
++};
++
++clock_t clock(void)
++{
++  return (*_clock_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/pc_hw/timer/uclock.c src/libc/pc_hw/timer/uclock.c
+--- src.org/libc/pc_hw/timer/uclock.c	Thu Jun  3 13:27:38 1999
++++ src/libc/pc_hw/timer/uclock.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+@@ -8,6 +9,7 @@
+ #include <go32.h>
+ #include <dpmi.h>
+ #include <libc/bss.h>
++#include <libc/pc9800.h>
+ 
+ static int uclock_bss = -1;
+ 
+@@ -19,7 +21,7 @@
+ 		  = 1,193,180 utics/sec */
+ 
+ uclock_t
+-uclock(void)
++uclock_at(void)
+ {
+   static uclock_t base = 0;
+   static unsigned long last_tics = 0;
+@@ -83,3 +85,55 @@
+   /* return relative time */
+   return rv - base;
+ }
++
++uclock_t uclock_98( void )
++{
++/*[エミュレーションに関する問題点]*****************************
++    ・タイムスタンパ高分解能使用	 307200Hz(0x4B000Hz)
++    ・カレンダも使用するので時間がかかる(T_T)
++ **************************************************************/
++  static time_t   base_sec = 0;
++  static unsigned base_tic = 0;
++  time_t   rv_sec;
++  unsigned rv_tic, ticL, ticH, diff_sec;
++  uclock_t diff_tic;
++
++  if (uclock_bss != __bss_count) {
++    uclock_bss = __bss_count;
++    base_sec = 0;
++    base_tic = 0;
++  }
++
++  rv_sec = time(NULL);
++  ticH   = inportw(0x5C);
++  ticL   = inportw(0x5E) & 0xff00;
++  rv_tic = (ticL << 8) + ticH;
++  if (base_sec == 0L) {
++    base_sec = rv_sec;
++    base_tic = rv_tic;
++  }
++
++  diff_sec = rv_sec - base_sec;
++  if ( __crt0_mtype == PC98H || _farpeekb(_dos_ds, 0x45B) & 0x04 ) {
++    ticL = rv_tic - base_tic;
++    if ( rv_tic < base_tic )
++      ticL += 0x1000000;
++    if ( ticL > 0x800000 )
++      diff_sec -= 8;
++    else
++      diff_sec += 8;
++    diff_tic = (uclock_t)(diff_sec * 0x4B / 0x1000) * 0x1000000 + ticL;
++    return (uclock_t)(diff_tic*UCLOCKS_PER_SEC/0x4B000);
++  } else
++    return (uclock_t)(diff_sec*UCLOCKS_PER_SEC);
++}
++
++static uclock_t (*_uclock_jmp_tbl[])(void) = {
++  uclock_at,
++  uclock_98
++};
++
++uclock_t uclock(void)
++{
++  return (*_uclock_jmp_tbl[__crt0_mtype >> 4])();
++}
+diff -urN src.org/libc/posix/termios/tcflush.c src/libc/posix/termios/tcflush.c
+--- src.org/libc/posix/termios/tcflush.c	Thu Jun  3 13:27:40 1999
++++ src/libc/posix/termios/tcflush.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ #include <errno.h>
+@@ -8,6 +9,8 @@
+ #include <libc/farptrgs.h>
+ #include <dpmi.h>
+ #include <go32.h>
++#include <libc/pc9800.h>
++#include <bios.h>
+ 
+ #define _DEV_STDIN  0x0001
+ #define _DEV_STDOUT 0x0002
+@@ -20,21 +23,19 @@
+ static int
+ getkey_nowait (void)
+ {
+-  __dpmi_regs r;
+-
+   /* If the head and tail of the keyboard buffer are the same, the
+      buffer is empty.  */
+-  if (_farpeekw(_dos_ds, 0x41a) == _farpeekw(_dos_ds, 0x41c))
++  if ( ISPCAT(__crt0_mtype)
++       && _farpeekw(_dos_ds, 0x41a) == _farpeekw(_dos_ds, 0x41c) )
++    return 0;
++  if ( ISPC98(__crt0_mtype)
++       && _farpeekw(_dos_ds, 0x524) == _farpeekw(_dos_ds, 0x526) )
+     return 0;
+ 
+-  r.h.ah = 0x11;
+-  __dpmi_int(0x16, &r);
+-  if (r.x.flags & 0x40) /* if Zero flag is set, no key is waiting */
++  if ( !bioskey(_NKEYBRD_READY) )
+     return 0;
+ 
+-  r.h.ah = 0x10;
+-  __dpmi_int(0x16, &r);
+-  return r.x.ax;
++  return bioskey(_NKEYBRD_READ);
+ }
+ 
+ int
+diff -urN src.org/libc/posix/termios/tminit.c src/libc/posix/termios/tminit.c
+--- src.org/libc/posix/termios/tminit.c	Thu Jun  3 13:27:40 1999
++++ src/libc/posix/termios/tminit.c	Sun Nov 12 00:00:00 2000
+@@ -1,3 +1,4 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /*
+@@ -23,6 +24,8 @@
+ #include <libc/dosio.h>
+ #include <libc/ttyprvt.h>
+ #include <libc/farptrgs.h>
++#include <libc/pc9800.h>
++#include <bios.h>
+ 
+ #define _DEV_STDIN  0x0001
+ #define _DEV_STDOUT 0x0002
+@@ -111,25 +114,13 @@
+ static inline int
+ __direct_keysense (void)
+ {
+-  __dpmi_regs r;
+-
+-  r.h.ah = 0x01;
+-  __dpmi_int (0x16, &r);
+-  if (r.x.flags & _REG_STATUS_ZF)
+-    return 0;
+-
+-  return 1;
++  return bioskey(_KEYBRD_READY);
+ }
+ 
+ static inline unsigned char
+ __direct_keyinput (void)
+ {
+-  __dpmi_regs r;
+-
+-  r.h.ah = 0x00;
+-  __dpmi_int (0x16, &r);
+-
+-  return r.h.al;
++  return bioskey(_KEYBRD_READ) & 0x00ff;
+ }
+ 
+ #define _KEY_INS  0x80
+@@ -144,14 +135,7 @@
+ static inline int
+ __direct_ctrlsense (void)
+ {
+-  __dpmi_regs r;
+-
+-  r.h.ah = 0x02;
+-  __dpmi_int (0x16, &r);
+-  if (r.h.al & _KEY_CTRL)
+-    return 1;
+-
+-  return 0;
++  return bioskey(_KEYBRD_SHIFTSTATUS) & _KEY_CTRL;
+ }
+ 
+ static inline void
+@@ -528,13 +512,12 @@
+ 	  /* produce spaces until the next TAB stop */
+ 	  else if (ch == '\t')
+ 	    {
+-	      int col, max_col;
++	      int row, col, max_col;
+ 
+-	      _farsetsel (_dos_ds);
+ 	      /* current column (cursor position) on the active page */
+-	      col = _farnspeekw (0x450 + _farnspeekb (0x462)) & 0xff;
++	      ScreenGetCursor(&row, &col);
+ 	      /* the number of displayed character columns */
+-	      max_col = _farnspeekw (0x44a);
++	      max_col = ScreenCols();
+ 
+ 	      for (__direct_output (' '), col += 1; col % 8; col++)
+ 		{
+diff -urN src.org/libc/posix/unistd/getpid.c src/libc/posix/unistd/getpid.c
+--- src.org/libc/posix/unistd/getpid.c	Thu Jan 25 18:59:44 1996
++++ src/libc/posix/unistd/getpid.c	Sun Nov 12 00:00:00 2000
+@@ -1,9 +1,12 @@
++/* Modified by takas 1997-2000 for libc(AT/98) */
+ /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
+ /* Copyright (C) 1995 DJ Delorie, see COPYING.DJ for details */
+ #include <unistd.h>
+ #include <go32.h>
+ #include <libc/farptrgs.h>
+ #include <libc/bss.h>
++#include <libc/pc9800.h>
++#include <time.h>
+ 
+ static int pid_count = -1;
+ static pid_t my_pid;
+@@ -14,7 +17,10 @@
+   if (pid_count != __bss_count)
+   {
+     pid_count = __bss_count;
+-    my_pid = _farpeekw(_dos_ds, 0x46c);
++    if ( ISPC98(__crt0_mtype) )
++      my_pid = (pid_t)time(NULL);
++    else
++      my_pid = _farpeekw(_dos_ds, 0x46c);
+     my_pid &= 0x3fff;
+     my_pid |= 0x1000;
+   }
