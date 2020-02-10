@@ -1,3 +1,4 @@
+/* Modified by takas 1997-2000 for libc(AT/98) */
 /* Copyright (C) 2011 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 1996 DJ Delorie, see COPYING.DJ for details */
 #include <libc/stubs.h>
@@ -5,6 +6,7 @@
 #include <io.h>		/* for the prototype of `_flush_disk_cache' */
 #include <dir.h>	/* for `getdisk' */
 #include <dpmi.h>	/* for `__dpmi_int' and friends */
+#include <libc/pc9800.h>
 
 /* Try to cause the disk cache to write the cached data to disk(s).  */
 void
@@ -33,12 +35,18 @@ _flush_disk_cache(void)
   }
 
 do_BIOS_DISK_RESET:
-  /* The BIOS Disk Reset function causes most DOS caches to flush.  */
-  r.x.ax = 0;
-  /* Hard disks should have 7th bit set.  */
-  /* FIXME: The mapping between DOS drive numbers and BIOS
-     drives is ignored.  The assumption is that Reset function
-     on ANY hard disk causes the cache to flush its buffers.  */
-  r.x.dx = drv > 2 ? ((drv - 2) | 0x80) : drv;
-  __dpmi_int(0x13, &r);
+  if ( ISPCAT(__crt0_mtype) )
+  {
+    /* The BIOS Disk Reset function causes most DOS caches to flush.  */
+    r.x.ax = 0;
+    /* Hard disks should have 7th bit set.  */
+    /* FIXME: The mapping between DOS drive numbers and BIOS
+       drives is ignored.  The assumption is that Reset function
+       on ANY hard disk causes the cache to flush its buffers.  */
+    r.x.dx = drv > 2 ? ((drv - 2) | 0x80) : drv;
+    __dpmi_int(0x13, &r);
+  else {
+    r.h.ah = 0x0d;
+    __dpmi_int(0x21, &r);
+  }
 }
