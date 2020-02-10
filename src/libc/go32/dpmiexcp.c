@@ -23,6 +23,7 @@
 #include <sys/nearptr.h>		/* For DS base/limit info */
 #include <libc/internal.h>
 #include <stubinfo.h>
+#include <libc/pc9800.h>
 
 #define err(x) _write(STDERR_FILENO, x, sizeof(x)-1)
 
@@ -197,7 +198,7 @@ do_faulting_finish_message(int fake_exception)
   const char *prog_name;
   
   /* check video mode for original here and reset (not if PC98) */
-  if(ScreenPrimary != 0xa0000 && _farpeekb(_dos_ds, 0x449) != old_video_mode) {
+  if( ISPCAT(__crt0_mtype) && _farpeekb(_dos_ds, 0x449) != old_video_mode) {
     asm volatile ("pusha;movzbl _old_video_mode,%eax; int $0x10;popa;nop");
   }
   en = (signum >= EXCEPTION_COUNT) ? 0 : 
@@ -523,7 +524,7 @@ __djgpp_exception_setup(void)
   size_t i;
 
   __excep_ds_alias = __djgpp_ds_alias;
-  if (ScreenPrimary != 0xa0000)
+  if ( ISPCAT(__crt0_mtype) )
     {
       __djgpp_set_sigint_key(DEFAULT_SIGINT);
       __djgpp_set_sigquit_key(DEFAULT_SIGQUIT);
