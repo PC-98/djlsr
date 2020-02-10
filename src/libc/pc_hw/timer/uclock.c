@@ -1,3 +1,4 @@
+/* Modified by takas 1997-2000 for libc(AT/98) */
 /* Copyright (C) 2003 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 2001 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
@@ -11,6 +12,7 @@
 #include <go32.h>
 #include <dpmi.h>
 #include <libc/bss.h>
+#include <libc/pc9800.h>
 #include <dos.h>
 #include <signal.h>
 #include <setjmp.h>
