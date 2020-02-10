@@ -1,3 +1,4 @@
+/* Modified by takas 1997-2000 for libc(AT/98) */
 /* Copyright (C) 2015 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 2004 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 2003 DJ Delorie, see COPYING.DJ for details */
@@ -23,11 +24,12 @@
 #include <unistd.h>
 #include <libc/environ.h>
 #include <dos.h> /* for _osmajor/_osminor */
+#include <libc/pc9800.h>
 #include <libc/unconst.h>
 
 /* Global variables */
 
-#define ds _my_ds()
+#define __my_ds _my_ds()
 
 /* This gets incremented each time the program is started.
    Programs (such as Emacs) which dump their code to create
