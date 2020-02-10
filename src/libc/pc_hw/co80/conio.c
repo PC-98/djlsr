@@ -1,3 +1,4 @@
+/* Modified by takas 1997-2000 for libc(AT/98) */
 /* Copyright (C) 2002 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 1999 DJ Delorie, see COPYING.DJ for details */
 /* Copyright (C) 1998 DJ Delorie, see COPYING.DJ for details */
@@ -92,7 +93,7 @@ puttext_at(int c, int r, int c2, int r2, void *buf)
 }
 
 int
-_conio_gettext(int c, int r, int c2, int r2, void *buf)
+_conio_gettext_at(int c, int r, int c2, int r2, void *buf)
 {
   short *cbuf = (short *)buf;
   /* we should check for valid parameters, and maybe return 0 */

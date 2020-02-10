@@ -178,7 +178,7 @@ int puttext_98(int c, int r, int c2, int r2, void *buf)
   return 1;
 }
 
-int gettext_98(int c, int r, int c2, int r2, void *buf)
+int _conio_gettext_98(int c, int r, int c2, int r2, void *buf)
 {
   unsigned short *abuf, *tbuf;
   unsigned char *ap, *tp, *wp;
@@ -413,8 +413,8 @@ static int (*_puttext_jmp_tbl[])(int c, int r, int c2, int r2, void *buf) = {
 };
 
 static int (*_gettext_jmp_tbl[])(int c, int r, int c2, int r2, void *buf) = {
-  gettext_at,
-  gettext_98
+  _conio_gettext_at,
+  _conio_gettext_98
 };
 
 static void (*_textmode_jmp_tbl[])(int mode) = {
@@ -482,7 +482,7 @@ int puttext(int c, int r, int c2, int r2, void *buf)
   return (*_puttext_jmp_tbl[__crt0_mtype >> 4])(c, r, c2, r2, buf);
 }
 
-int gettext(int c, int r, int c2, int r2, void *buf)
+int _conio_gettext(int c, int r, int c2, int r2, void *buf)
 {
   return (*_gettext_jmp_tbl[__crt0_mtype >> 4])(c, r, c2, r2, buf);
 }
